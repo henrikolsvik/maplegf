@@ -1,0 +1,56 @@
+rule all:
+    input:
+        "results/results_lasso.txt",
+        "results/results_svm.txt",
+        "results/results_mlpnn.txt",
+        "results/results_random_forest.txt",
+        "results/results_processed_samples_stats.txt"
+        "preprocessing_output/
+
+rule preprocess:
+    input:
+        samp="samples/annotations.csv",
+        meta="metadata/metadata.csv"
+    output:
+        samp_out="preprocessing_output/processed_samples.csv",
+        meta_out="preprocessing_output/processed_metadata.csv",
+        stat_out="results/results_processed_samples_stats.txt"
+    shell:
+        "python scripts/term_processing.py {input.samp} IPR {input.meta} {output.samp_out} {output.meta_out} 100 0.9 False"
+
+rule ml_lasso:
+    input:
+        samples="preprocessed_data/processed_samples.csv"
+        targets="preprocessed_data/preprocessed_metadata.csv"
+    output:
+        "results/results_lasso.txt"
+    shell:
+        "python scripts/lasso.py {input.samples} {input.targets} {output} 5"
+
+rule ml_svm:
+    input:
+        samples="preprocessed_data/processed_samples.csv"
+        targets="preprocessed_data/preprocessed_metadata.csv"
+    output:
+        "results/results_svm.txt"
+    shell:
+        "python scripts/svm.py {input.samples} {input.targets} {output} 5"
+
+rule ml_random_forest:
+    input:
+        samples="preprocessed_data/processed_samples.csv"
+        targets="preprocessed_data/preprocessed_metadata.csv"
+    output:
+        "results/results_random_forest.txt"
+    shell:
+        "python scripts/random_forest.py {input.samples} {input.targets} {output} 5"
+
+rule ml_mplnn:
+    input:
+        samples="preprocessed_data/processed_samples.csv"
+        targets="preprocessed_data/preprocessed_metadata.csv"
+    output:
+        "results/results_mlpnn.txt"
+    shell:
+        "python scripts/mlpnn.py {input.samples} {input.targets} {output} 5"
+
