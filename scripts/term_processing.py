@@ -13,9 +13,6 @@ def run_preprocessing(sequence_dir, term_type, metadata_filepath, sample_output_
     if re.search('../../../Downloads', sample_output_filename):
         sample_output_filename = sample_output_filename.split(".")[0]
 
-    if re.search('../../../Downloads', target_output_filename):
-        target_output_filename = target_output_filename.split(".")[0]
-
     term_count_by_sample, coverage_statistics = [], []
     sequence_file_list = get_sequence_file_list(sequence_dir, metadata)
 
@@ -137,12 +134,9 @@ def read_metadata_file(metadata_filepath):
     lines = file.readlines()
     data = []
     for i in range(0, len(lines)):
-        if i % 2 == 0:
-            line = lines[i].replace("\n", "")
-            data.append(line.split(","))
+        line = lines[i].replace("\n", "")
+        data.append(line.split(","))
     file.close()
-
-    del data[0]
 
 #    for row in data:
 #        if row[3] == "Baseline":
