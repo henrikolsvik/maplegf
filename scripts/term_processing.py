@@ -40,7 +40,7 @@ def run_preprocessing(sequence_dir, term_type, metadata_filepath, sample_output_
     print("Number of terms after filtering: " + str(len(get_unique_terms(term_count_by_sample_limited))))
 
     if sample_output_filename is not None:
-        write_targets_to_file(metadata, sequence_file_list, target_output_filename, binary)
+        #write_targets_to_file(metadata, sequence_file_list, target_output_filename, binary)
         write_terms_to_file(term_count_by_sample_limited, term_count_by_sample_limited, sequence_file_list,
                             sample_output_filename)
         write_coverage_statistics_to_file(coverage_statistics, sequence_file_list, sample_output_filename)
@@ -139,16 +139,16 @@ def read_metadata_file(metadata_filepath):
     for i in range(0, len(lines)):
         if i % 2 == 0:
             line = lines[i].replace("\n", "")
-            data.append(line.split("\t"))
+            data.append(line.split(","))
     file.close()
 
     del data[0]
 
-    for row in data:
-        if row[3] == "Baseline":
-            metadata.append([row[0], row[3], row[8]])
+#    for row in data:
+#        if row[3] == "Baseline":
+#            metadata.append([row[0], row[3], row[8]])
 
-    return metadata
+    return data
 
 
 def read_files_matching_metadata(filepath, metadata_sequences):
