@@ -34,7 +34,7 @@ class Mlinterface:
         sample_names = []
         for i in range(1, len(lines)):
             line = lines[i].replace("\n", "")
-            line = line.split("\t")
+            line = line.split(",")
             sample_names.append(line.pop(0))
             line_float = []
             for element in line:
@@ -50,7 +50,7 @@ class Mlinterface:
         data = []
         for i in range(0, len(lines)):
             line = lines[i].replace("\n", "")
-            line = line.split("\t")
+            line = line.split(",")
             data.append(line[1])
         file.close()
 

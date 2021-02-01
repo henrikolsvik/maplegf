@@ -1,56 +1,55 @@
 rule all:
     input:
-        "results/results_lasso.txt",
+#        "results/results_lasso.txt",
         "results/results_svm.txt",
         "results/results_mlpnn.txt",
         "results/results_random_forest.txt",
-        "results/results_processed_samples_stats.txt"
-        "preprocessing_output/
+#        "results/results_processed_samples_stats.csv",
+        "preprocessing_output/processed_samples.csv"
 
 rule preprocess:
     input:
-        samp="samples/annotations.csv",
-        meta="metadata/metadata.csv"
+        samp="samples/",
+        meta="metadata/metadata_dummy.tsv"
     output:
         samp_out="preprocessing_output/processed_samples.csv",
-        meta_out="preprocessing_output/processed_metadata.csv",
-        stat_out="results/results_processed_samples_stats.txt"
+        meta_out="preprocessing_output/preprocessed_metadata.csv",
+ #       stat_out="results/processed_samples_stats.csv"
     shell:
         "python scripts/term_processing.py {input.samp} IPR {input.meta} {output.samp_out} {output.meta_out} 100 0.9 False"
 
-rule ml_lasso:
-    input:
-        samples="preprocessed_data/processed_samples.csv"
-        targets="preprocessed_data/preprocessed_metadata.csv"
-    output:
-        "results/results_lasso.txt"
-    shell:
-        "python scripts/lasso.py {input.samples} {input.targets} {output} 5"
+#rule ml_lasso:
+#    input:
+#        samples="preprocessing_output/processed_samples.csv",
+#        targets="preprocessing_output/preprocessed_metadata.csv"
+#    output:
+#        "results/results_lasso.txt"
+#    shell:
+#        "python scripts/ml/lasso.py {input.samples} {input.targets} {output} 5"
 
 rule ml_svm:
     input:
-        samples="preprocessed_data/processed_samples.csv"
-        targets="preprocessed_data/preprocessed_metadata.csv"
+        samples="preprocessing_output/processed_samples.csv",
+        targets="preprocessing_output/preprocessed_metadata.csv"
     output:
         "results/results_svm.txt"
     shell:
-        "python scripts/svm.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/svm.py {input.samples} {input.targets} {output} 5"
 
 rule ml_random_forest:
     input:
-        samples="preprocessed_data/processed_samples.csv"
-        targets="preprocessed_data/preprocessed_metadata.csv"
+        samples="preprocessing_output/processed_samples.csv",
+        targets="preprocessing_output/preprocessed_metadata.csv"
     output:
         "results/results_random_forest.txt"
     shell:
-        "python scripts/random_forest.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/random_forest.py {input.samples} {input.targets} {output} 5"
 
 rule ml_mplnn:
     input:
-        samples="preprocessed_data/processed_samples.csv"
-        targets="preprocessed_data/preprocessed_metadata.csv"
+        samples="preprocessing_output/processed_samples.csv",
+        targets="preprocessing_output/preprocessed_metadata.csv"
     output:
         "results/results_mlpnn.txt"
     shell:
-        "python scripts/mlpnn.py {input.samples} {input.targets} {output} 5"
-
+        "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output} 5"
