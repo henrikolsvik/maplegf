@@ -5,18 +5,28 @@ rule all:
         "results/results_mlpnn.txt",
         "results/results_random_forest.txt",
 #        "results/results_processed_samples_stats.csv",
-        "preprocessing_output/processed_samples.csv"
+        "preprocessing_output/processed_samples.csv",
+        "metadata/preprocessed_metadata.csv"
 
-rule preprocess:
+rule preprocess_metadata:
     input:
-        samp="samples/",
-        meta="metadata/metadata_dummy.tsv"
+        gender="metadata/kjonn_meta.csv",
+        pid="metadata/pid.csv"
     output:
-        samp_out="preprocessing_output/processed_samples.csv",
-        meta_out="preprocessing_output/preprocessed_metadata.csv",
+        meta="metadata/preprocessed_metadata.csv"
+    shell:
+        "python scripts/metadata_processing.py {input.gender} {input.pid} {output.meta}"
+
+rule preprocess_samples:
+    input:
+        samp="samples/simplified/",
+        meta="metadata/preprocessed_metadata.csv"
+    output:
+        samp_out="preprocessing_output/processed_samples.csv"
+#        meta_out="preprocessing_output/preprocessed_metadataa.csv",
  #       stat_out="results/processed_samples_stats.csv"
     shell:
-        "python scripts/term_processing.py {input.samp} IPR {input.meta} {output.samp_out} {output.meta_out} 100 0.9 False"
+        "python scripts/term_processing.py {input.samp} IPR {input.meta} {output.samp_out} abc 100 0.9 False"
 
 #rule ml_lasso:
 #    input:
