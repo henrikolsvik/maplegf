@@ -7,6 +7,15 @@ class Mlinterface:
 
     def target_strings_to_int(self, target):
         target_int = []
+
+        target_set = set(target)
+        if len(target_set) == 2:
+            for i in range(0, len(target)):
+                if target[i] == "M":
+                    target[i] = 1
+                else:
+                    target[i] = "0"
+
         for item in target:
             target_int.append(int(item))
 

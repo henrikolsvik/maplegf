@@ -1,21 +1,22 @@
 rule all:
     input:
-#        "results/results_lasso.txt",
+        "results/results_lasso.txt",
         "results/results_svm.txt",
         "results/results_mlpnn.txt",
         "results/results_random_forest.txt",
+        "results/results_xgboost.txt",
 #        "results/results_processed_samples_stats.csv",
         "preprocessing_output/processed_samples.csv",
         "metadata/preprocessed_metadata.csv"
 
-rule preprocess_metadata:
-    input:
-        gender="metadata/kjonn_meta.csv",
-        pid="metadata/pid.csv"
-    output:
-        meta="metadata/preprocessed_metadata.csv"
-    shell:
-        "python scripts/metadata_processing.py {input.gender} {input.pid} {output.meta}"
+#rule preprocess_metadata:
+#    input:
+#        gender="metadata/kjonn_meta.csv",
+#        pid="metadata/pid.csv"
+#    output:
+#        meta="metadata/preprocessed_metadata.csv"
+#    shell:
+#        "python scripts/metadata_processing.py {input.gender} {input.pid} {output.meta}"
 
 rule preprocess_samples:
     input:
@@ -28,19 +29,19 @@ rule preprocess_samples:
     shell:
         "python scripts/term_processing.py {input.samp} IPR {input.meta} {output.samp_out} abc 100 0.9 False"
 
-#rule ml_lasso:
-#    input:
-#        samples="preprocessing_output/processed_samples.csv",
-#        targets="preprocessing_output/preprocessed_metadata.csv"
-#    output:
-#        "results/results_lasso.txt"
-#    shell:
-#        "python scripts/ml/lasso.py {input.samples} {input.targets} {output} 5"
+rule ml_lasso:
+    input:
+        samples="preprocessing_output/processed_samples.csv",
+        targets="metadata/preprocessed_metadata.csv"
+    output:
+        "results/results_lasso.txt"
+    shell:
+        "python scripts/ml/lasso.py {input.samples} {input.targets} {output} 5"
 
 rule ml_svm:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="preprocessing_output/preprocessed_metadata.csv"
+        targets="metadata/preprocessed_metadata.csv"
     output:
         "results/results_svm.txt"
     shell:
@@ -49,7 +50,7 @@ rule ml_svm:
 rule ml_random_forest:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="preprocessing_output/preprocessed_metadata.csv"
+        targets="metadata/preprocessed_metadata.csv"
     output:
         "results/results_random_forest.txt"
     shell:
@@ -58,8 +59,26 @@ rule ml_random_forest:
 rule ml_mplnn:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="preprocessing_output/preprocessed_metadata.csv"
+        targets="metadata/preprocessed_metadata.csv"
     output:
         "results/results_mlpnn.txt"
     shell:
         "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output} 5"
+
+rule ml_xgboost:
+    input:
+        samples="preprocessing_output/processed_samples.csv",
+        targets="metadata/preprocessed_metadata.csv"
+    output:
+        "results/results_xgboost.txt"
+    shell:
+        "python scripts/ml/xgboost_impl.py {input.samples} {input.targets} {output} 5"
+
+rule ml_LTSM:
+    input:
+        samples="preprocessing_output/processed_samples.csv",
+        targets="metadata/preprocessed_metadata.csv"
+    output:
+        "results/results_LTSM.txt"
+    shell:
+        "python scripts/ml/LTSM.py {input.samples} {input.targets} {output} 5"
