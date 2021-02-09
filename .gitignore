@@ -1,5 +1,4 @@
 /venv/
-*.csv
 *.tsv
 /samples/
 /samples/simplified/
