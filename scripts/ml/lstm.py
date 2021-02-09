@@ -1,6 +1,10 @@
 import sys
+
+import numpy
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.python.keras.models import Sequential
 
 from ml_interface import Mlinterface
 
@@ -8,7 +12,6 @@ from ml_interface import Mlinterface
 class LSTM(Mlinterface):
 
     def machine_learning_service(self, input_samples_file, input_target_file, output_filename, n_split):
-
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
 
         bound_samples_and_targets = []
@@ -19,22 +22,19 @@ class LSTM(Mlinterface):
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(samples_with_names, target, n_split)
 
-        model = tf.keras.layers.LSTM()
+        model = Sequential()
+        model.add(layers.Embedding(10000, 32, input_shape=(115,)))
+        model.add(layers.LSTM(32))
+        model.add(layers.Dense(10000))
         model.summary()
-
-        model.compile(
-            loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True),
-            optimizer=keras.optimizers.RMSprop(),
-            metrics=["accuracy"],
-        )
-
-        history = model.fit(train_sample, train_target, batch_size=64, epochs=2, validation_split=0.2)
-
+        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+        model.fit(train_sample, train_target, batch_size=32, epochs=2)
         test_scores = model.evaluate(test_sample, test_target, verbose=2)
         print("Test loss:", test_scores[0])
         print("Test accuracy:", test_scores[1])
 
-        score, predictions = self.make_predictions(model, train_sample, train_target, test_sample, test_target, test_name)
+        score, predictions = self.make_predictions(model, train_sample, train_target, test_sample, test_target,
+                                                   test_name)
 
         self.write_results(output_filename, score, predictions)
 
