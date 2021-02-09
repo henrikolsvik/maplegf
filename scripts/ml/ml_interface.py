@@ -1,4 +1,4 @@
-import sklearn
+import sklearn.model_selection
 import time
 import numpy as np
 
