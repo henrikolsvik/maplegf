@@ -21,12 +21,12 @@ class Mlinterface:
 
         return target_int
 
-    def write_results(self, output_filename, score, predictions):
+    def write_results(self, output_filename, score):
         file = open(output_filename, "w")
-        file.write(Mlinterface.generate_result_text(self, score, predictions))
+        file.write(Mlinterface.generate_result_text(self, score))
         file.close()
 
-    def generate_result_text(self, score, predictions):
+    def generate_result_text(self, score):
         results_string = "Total Accuracy Score Of: " + "{:.2f}".format(np.array(score).sum() / len(score) * 100) \
                          + "%.\n" + "Results of individual runs: " + str(score) + "\n**** \n\n"
 

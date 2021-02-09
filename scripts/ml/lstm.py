@@ -19,11 +19,10 @@ class LSTM(Mlinterface):
         for i in range(0, len(samples_with_names[0])):
             bound_samples_and_targets.append([samples_with_names[1][i], samples_with_names[0][i], target[i]])
 
-        #train_sample, train_target, test_sample, test_target, test_name = \
-        #    self.n_split_shuffle(samples_with_names, target, n_split)
+        train_sample, train_target, test_sample, test_target, test_name = \
+            self.n_split_shuffle(samples_with_names, target, n_split)
 
-        train_sample = samples_with_names[0]
-        train_target = [int(k) for k in target]
+        score = []
 
         model = Sequential()
         model.add(layers.Embedding(10000, 32, input_shape=(115,)))
@@ -31,14 +30,19 @@ class LSTM(Mlinterface):
         model.add(layers.Dense(10000))
         model.summary()
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-        model.fit(train_sample, train_target, batch_size=32, epochs=2)
-        #test_scores = model.evaluate(test_sample, test_target, verbose=2)
-        #print("Test loss:", test_scores[0])
-        #print("Test accuracy:", test_scores[1])
 
-        #score, predictions = self.make_predictions(model, train_sample, train_target, test_sample, test_target,                                           test_name)
+        for i in range(0, len(train_sample)):
+            keras.backend.clear_session()
 
-        #self.write_results(output_filename, score, predictions)
+            iter_train_sample = train_sample[i]
+            iter_train_target = [int(k) for k in train_target[i]]
+            iter_test_sample = test_sample[i]
+            iter_test_target = [int(k) for k in test_target[i]]
+
+            model.fit(iter_train_sample, iter_train_target, batch_size=32, epochs=20)
+            score.append(model.evaluate(iter_test_sample, iter_test_target, verbose=2)[1])
+
+        self.write_results(output_filename, score)
 
 
 if __name__ == '__main__':

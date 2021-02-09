@@ -20,7 +20,7 @@ class XGBooster(Mlinterface):
         score, predictions = self.make_predictions(xgb_model, train_sample, train_target, test_sample, test_target,
                                                    test_name)
 
-        self.write_results(output_filename, score, predictions)
+        self.write_results(output_filename, score)
 
 
 if __name__ == '__main__':
