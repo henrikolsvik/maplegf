@@ -1,15 +1,17 @@
 import sys
 
 
-def main(gendermeta_filename, pidmeta_filename, output_filename):
-    genders = read_file(gendermeta_filename)
-    pid = read_file(pidmeta_filename)
-
+def main(input_filename, output_filename, type):
+    data = read_file(input_filename)
     combined_data = []
-    for item in pid:
-        for entry in genders:
-            if item[0] == entry[0]:
-                combined_data.append([item[1], entry[1]])
+
+    if type == "gender":
+        for item in data:
+            if item[1] == "M":
+                item[1] = 1
+            if item[1] == "F":
+                item[1] = 0
+            combined_data.append([item[0], item[1]])
 
     write_metadata(combined_data, output_filename)
 
