@@ -11,13 +11,13 @@ rule all:
 #        "preprocessing_output/processed_samples.csv",
         "metadata/metadata.csv"
 
-rule preprocess_metadata:
-    input:
-        meta="metadata/dummy_metadata.csv",
-    output:
-        meta="metadata/metadata.csv"
-    shell:
-        "python scripts/metadata_processing.py {input.meta} {output.meta} gender"
+#rule preprocess_metadata:
+#    input:
+#        meta="metadata/dummy_metadata.csv",
+#    output:
+#        meta="metadata/metadata.csv"
+#    shell:
+#        "python scripts/metadata_processing.py {input.meta} {output.meta} gender"
 
 rule preprocess_samples:
     input:
