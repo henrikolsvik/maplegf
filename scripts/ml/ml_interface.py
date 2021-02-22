@@ -5,6 +5,14 @@ import numpy as np
 
 class Mlinterface:
 
+    def read_config(self, file):
+        data = open(file, "r")
+        settings = {}
+        for line in data:
+            if line[0] != "#":
+                settings[line.split("=")[0]] = line.split("=")[1]
+        return settings
+
     def target_strings_to_int(self, target):
         target_int = []
 

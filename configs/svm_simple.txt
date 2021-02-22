@@ -1,0 +1,2 @@
+#SVM CONFIG SIMPLE
+n=5
