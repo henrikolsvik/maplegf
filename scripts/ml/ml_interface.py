@@ -5,6 +5,18 @@ import numpy as np
 
 class Mlinterface:
 
+    def targets_to_int(self, target):
+
+        num_targets = {}
+        for i in range(0, len(target)):
+            if target[i] not in num_targets:
+                num_targets[target[i]] = len(num_targets)
+            target[i] = num_targets[target[i]]
+
+        print("Binarified target files")
+        print(num_targets)
+        return target
+
     def read_config(self, file):
         data = open(file, "r")
         settings = {}

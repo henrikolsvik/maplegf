@@ -1,7 +1,5 @@
 import sys
 
-import numpy
-import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.python.keras.models import Sequential
@@ -13,6 +11,7 @@ class LSTM(Mlinterface):
 
     def machine_learning_service(self, input_samples_file, input_target_file, output_filename, config_file):
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
+        target = self.targets_to_int(target)
         n = self.load_config(self.read_config(config_file))
 
         bound_samples_and_targets = []

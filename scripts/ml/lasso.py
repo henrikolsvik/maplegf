@@ -14,8 +14,6 @@ class Lasso(Mlinterface):
 
         bound_samples_and_targets = []
 
-
-
         for i in range(0, len(samples_with_names[0])):
             bound_samples_and_targets.append([samples_with_names[1][i], samples_with_names[0][i], target[i]])
 
