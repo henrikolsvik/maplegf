@@ -1,28 +1,28 @@
+
 rule all:
     input:
-        "results/results_lasso.txt",
-        "results/results_svm.txt",
-        "results/results_mlpnn.txt",
-        "results/results_random_forest.txt",
-        "results/results_xgboost.txt",
-        "results/results_lstm.txt",
-#        "results/results_processed_samples_stats.csv",
-        "preprocessing_output/processed_samples.csv",
-        "metadata/dummy_metadata.csv"
+        "results/results_lasso_simple.txt",
+        "results/results_svm_simple.txt",
+        "results/results_mlpnn_simple.txt",
+        "results/results_random_forest_simple.txt",
+        "results/results_xgboost_simple.txt",
+        "results/results_lstm_simple.txt",
+#       "results/results_processed_samples_stats.csv",
+#        "preprocessing_output/processed_samples.csv",
+        "metadata/metadata.csv"
 
-#rule preprocess_metadata:
-#    input:
-#        gender="metadata/kjonn_meta.csv",
-#        pid="metadata/pid.csv"
-#    output:
-#        meta="metadata/preprocessed_metadata.csv"
-#    shell:
-#        "python scripts/metadata_processing.py {input.gender} {input.pid} {output.meta}"
+rule preprocess_metadata:
+    input:
+        meta="metadata/dummy_metadata.csv",
+    output:
+        meta="metadata/metadata.csv"
+    shell:
+        "python scripts/metadata_processing.py {input.meta} {output.meta} gender"
 
 rule preprocess_samples:
     input:
         samp="samples/simplified/",
-        meta="metadata/dummy_metadata.csv"
+        meta="metadata/metadata.csv"
     output:
         samp_out="preprocessing_output/processed_samples.csv"
 #        meta_out="preprocessing_output/preprocessed_metadataa.csv",
@@ -33,53 +33,59 @@ rule preprocess_samples:
 rule ml_lasso:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="metadata/dummy_metadata.csv"
+        targets="metadata/metadata.csv",
+        config="configs/lasso_simple.txt"
     output:
-        "results/results_lasso.txt"
+        "results/results_lasso_simple.txt"
     shell:
-        "python scripts/ml/lasso.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/lasso.py {input.samples} {input.targets} {output} {input.config}"
 
 rule ml_svm:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="metadata/dummy_metadata.csv"
+        targets="metadata/metadata.csv",
+        config="configs/svm_simple.txt"
     output:
-        "results/results_svm.txt"
+        "results/results_svm_simple.txt"
     shell:
-        "python scripts/ml/svm.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/svm.py {input.samples} {input.targets} {output} {input.config}"
 
 rule ml_random_forest:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="metadata/dummy_metadata.csv"
+        targets="metadata/metadata.csv",
+        config="configs/random_forest_simple.txt"
     output:
-        "results/results_random_forest.txt"
+        "results/results_random_forest_simple.txt"
     shell:
-        "python scripts/ml/random_forest.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/random_forest.py {input.samples} {input.targets} {output} {input.config}"
 
 rule ml_mplnn:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="metadata/dummy_metadata.csv"
+        targets="metadata/metadata.csv",
+        config="configs/mlpnn_simple.txt"
     output:
-        "results/results_mlpnn.txt"
+        "results/results_mlpnn_simple.txt"
     shell:
-        "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output} {input.config}"
 
 rule ml_xgboost:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="metadata/dummy_metadata.csv"
+        targets="metadata/metadata.csv",
+        config="configs/xgboost_simple.txt"
     output:
-        "results/results_xgboost.txt"
+        "results/results_xgboost_simple.txt"
     shell:
-        "python scripts/ml/xgboost_impl.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/xgboost_impl.py {input.samples} {input.targets} {output} {input.config}"
 
 rule ml_LSTM:
     input:
         samples="preprocessing_output/processed_samples.csv",
-        targets="metadata/dummy_metadata.csv"
+        targets="metadata/metadata.csv",
+        config="configs/lstm_simple.txt"
     output:
-        "results/results_lstm.txt"
+        "results/results_lstm_simple.txt"
     shell:
-        "python scripts/ml/lstm.py {input.samples} {input.targets} {output} 5"
+        "python scripts/ml/lstm.py {input.samples} {input.targets} {output} {input.config}"
