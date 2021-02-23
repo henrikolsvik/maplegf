@@ -4,14 +4,12 @@ import re
 import numpy as np
 
 
-def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename, target_output_filename,
+def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
                       config_file):
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
     term_type, threshold_abundance, threshold_share = read_config(config_file)
-
-    print(sample_output_filename, target_output_filename)
 
     if re.search('../../../Downloads', sample_output_filename):
         sample_output_filename = sample_output_filename.split(".")[0]
@@ -274,5 +272,4 @@ def get_correct_itemno(term_type):
 
 
 if __name__ == '__main__':
-    run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7],
-                      sys.argv[8])
+    run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])

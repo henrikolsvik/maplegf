@@ -9,7 +9,7 @@ rule all:
         "results/processed_samples_stats.csv",
         "results/unprocessed_samples_term_count.csv",
         "results/processed_samples_term_count.csv",
-        "preprocessing_output/processed_samples.csv",
+        "preprocessing_output/processed_samples_simple.csv",
         "metadata/metadata.csv"
 
 rule preprocess_samples:
