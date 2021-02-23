@@ -11,7 +11,6 @@ class MLPNN(Mlinterface):
         config = self.read_config(config_file)
         n = int(config["n"])
         max_iter = int(config["max_iter"])
-        hidden_layers = int(config["hidden_layers"])
 
         bound_samples_and_targets = []
         for i in range(0, len(samples_with_names[0])):
@@ -20,7 +19,7 @@ class MLPNN(Mlinterface):
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(samples_with_names, target, n)
 
-        clf = MLPClassifier(max_iter=max_iter,hidden_layer_sizes=(hidden_layers,))
+        clf = MLPClassifier(max_iter=max_iter)
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
         self.write_results(output_filename, score, target)

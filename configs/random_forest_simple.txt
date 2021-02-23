@@ -1,2 +1,2 @@
 #RF CONFIG SIMPLE
-n=5
+n=10
