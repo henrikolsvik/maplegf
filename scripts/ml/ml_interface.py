@@ -5,8 +5,16 @@ import numpy as np
 
 class Mlinterface:
 
-    def targets_to_int(self, target):
+    def count_targets(self, target):
+        num_targets = {}
+        for i in range(0, len(target)):
+            if target[i] not in num_targets:
+                num_targets[target[i]] = 1
+            else:
+                num_targets[target[i]] += 1
+        return num_targets
 
+    def targets_to_int(self, target):
         num_targets = {}
         for i in range(0, len(target)):
             if target[i] not in num_targets:
@@ -41,16 +49,25 @@ class Mlinterface:
 
         return target_int
 
-    def write_results(self, output_filename, score):
+    def write_results(self, output_filename, score, target):
         file = open(output_filename, "w")
-        file.write(Mlinterface.generate_result_text(self, score))
+        file.write(self.generate_minimum_result_text(target) + "/n")
+        file.write(self.generate_result_text(score))
         file.close()
 
-    def generate_result_text(self, score):
-        results_string = "Total Accuracy Score Of: " + "{:.2f}".format(np.array(score).sum() / len(score) * 100) \
-                         + "%.\n" + "Results of individual runs: " + str(score) + "\n**** \n\n"
+    def generate_minimum_result_text(self, target):
+        target_counts = self.count_targets(target)
+        max_count, count = 0, 0
+        for item in target_counts:
+            if target_counts[item] > max_count:
+                max_count = target_counts[item]
+            count += target_counts[item]
+        baseline_accuracy = max_count / count
+        return "Baseline accuracy: {0:.2f}%".format(baseline_accuracy)
 
-        return results_string
+    def generate_result_text(self, score):
+        return "Total Accuracy Score Of: " + "{:.2f}".format(np.array(score).sum() / len(score) * 100) \
+               + "%.\n" + "Results of individual runs: " + str(score) + "\n**** \n\n"
 
     def load_files(self, input_samples_file, input_target_file):
         return Mlinterface.read_sample_file(self, input_samples_file), Mlinterface.read_target_file(self,

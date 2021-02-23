@@ -42,7 +42,7 @@ class LSTM(Mlinterface):
             model.fit(iter_train_sample, iter_train_target, batch_size=32, epochs=20)
             score.append(model.evaluate(iter_test_sample, iter_test_target, verbose=2)[1])
 
-        self.write_results(output_filename, score)
+        self.write_results(output_filename, score, target)
 
     def load_config(self, config):
         n = int(config["n"])

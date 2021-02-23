@@ -4,9 +4,9 @@ import re
 import numpy as np
 
 
-def run_preprocessing(sequence_dir, term_type, metadata_filepath, sample_output_filename, target_output_filename,
-                      threshold_abundance, threshold_share, binary):
+def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename, target_output_filename, config_file):
     metadata = read_metadata_file(metadata_filepath)
+    term_type, threshold_abundance, threshold_share = read_config(config_file)
 
     print(sample_output_filename, target_output_filename)
 
@@ -71,7 +71,6 @@ def write_coverage_key_stats(coverage_statistics, sequence_file_list, sample_out
     for item in sequence_stats:
         file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2]))
     file.close()
-
 
 
 def get_coverage_data(term_list):
@@ -273,6 +272,15 @@ def get_term_count(term_list):
     return term_count
 
 
+def read_config(file):
+    data = open(file, "r")
+    settings = {}
+    for line in data:
+        if line[0] != "#":
+            settings[line.split("=")[0]] = line.split("=")[1]
+    return settings
+
+
 def get_correct_itemno(term_type):
     if term_type == "GO":
         return 5
@@ -286,7 +294,6 @@ def get_correct_itemno(term_type):
 
 if __name__ == '__main__':
     if len(sys.argv) == 9:
-        run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], float(sys.argv[6]),
-                          float(sys.argv[7]), sys.argv[8])
+        run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
     else:
         print("Wrong number of arguments.")
