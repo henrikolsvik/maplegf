@@ -9,11 +9,14 @@ from ml_interface import Mlinterface
 
 class LSTM(Mlinterface):
 
+    def __init__(self):
+        super().__init__()
+
     def machine_learning_service(self, input_samples_file, input_target_file, output_filename, config_file):
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         target = self.targets_to_int(target)
-        config = self.read_config(config_file)
-        n = int(config["n"])
+        self.read_config(config_file)
+        n = int(self.config["n"])
 
         bound_samples_and_targets = []
 

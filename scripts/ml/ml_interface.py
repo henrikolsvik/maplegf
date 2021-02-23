@@ -5,6 +5,9 @@ import numpy as np
 
 class Mlinterface:
 
+    def __init__(self):
+        self.config = None
+
     def count_targets(self, target):
         num_targets = {}
         for i in range(0, len(target)):
@@ -12,6 +15,9 @@ class Mlinterface:
                 num_targets[target[i]] = 1
             else:
                 num_targets[target[i]] += 1
+
+        print("Type count")
+        print(num_targets)
         return num_targets
 
     def targets_to_int(self, target):
@@ -31,7 +37,7 @@ class Mlinterface:
         for line in data:
             if line[0] != "#":
                 settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
-        return settings
+        self.config = settings
 
     def target_strings_to_int(self, target):
         target_int = []
@@ -51,8 +57,10 @@ class Mlinterface:
 
     def write_results(self, output_filename, score, target):
         file = open(output_filename, "w")
+        file.write("FILE: " + output_filename + "\n")
         file.write(self.generate_minimum_result_text(target) + "\n")
         file.write(self.generate_result_text(score))
+        file.write(str(self.config))
         file.close()
 
     def generate_minimum_result_text(self, target):
@@ -62,12 +70,12 @@ class Mlinterface:
             if target_counts[item] > max_count:
                 max_count = target_counts[item]
             count += target_counts[item]
-        baseline_accuracy = max_count / count
+        baseline_accuracy = (max_count / count)*100
         return "Baseline accuracy: {0:.2f}%".format(baseline_accuracy)
 
     def generate_result_text(self, score):
         return "Total Accuracy Score Of: " + "{:.2f}".format(np.array(score).sum() / len(score) * 100) \
-               + "%.\n" + "Results of individual runs: " + str(score) + "\n**** \n\n"
+               + "%.\n" + "Results of individual runs: " + str(score) + "\n**** \nConfig:\n"
 
     def load_files(self, input_samples_file, input_target_file):
         return Mlinterface.read_sample_file(self, input_samples_file), Mlinterface.read_target_file(self,
