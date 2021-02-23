@@ -23,7 +23,7 @@ class Lasso(Mlinterface):
         clf = linear_model.Lasso(0.1, positive={True}, tol=0.1)
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
-        self.write_results(output_filename, score)
+        self.write_results(output_filename, score, target)
 
     def load_config(self, config):
         n = int(config["n"])

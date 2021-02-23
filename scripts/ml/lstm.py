@@ -12,12 +12,18 @@ class LSTM(Mlinterface):
     def machine_learning_service(self, input_samples_file, input_target_file, output_filename, config_file):
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         target = self.targets_to_int(target)
-        n = self.load_config(self.read_config(config_file))
+        config = self.read_config(config_file)
+        n = int(config["n"])
 
         bound_samples_and_targets = []
 
         for i in range(0, len(samples_with_names[0])):
             bound_samples_and_targets.append([samples_with_names[1][i], samples_with_names[0][i], target[i]])
+
+        max_value = 0
+        for item in bound_samples_and_targets:
+            if max(item[1]) > max_value:
+                max_value = int(max(item[1]))+1
 
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(samples_with_names, target, n)
@@ -25,8 +31,8 @@ class LSTM(Mlinterface):
         score = []
 
         model = Sequential()
-        model.add(layers.Embedding(10000, 32, input_shape=(115,)))
-        model.add(layers.LSTM(32))
+        model.add(layers.Embedding(max_value, 32, input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
+        model.add(layers.LSTM(64))
         model.add(layers.Dense(10000))
         model.summary()
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
@@ -43,10 +49,6 @@ class LSTM(Mlinterface):
             score.append(model.evaluate(iter_test_sample, iter_test_target, verbose=2)[1])
 
         self.write_results(output_filename, score, target)
-
-    def load_config(self, config):
-        n = int(config["n"])
-        return n
 
 
 if __name__ == '__main__':

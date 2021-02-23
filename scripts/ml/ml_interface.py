@@ -30,7 +30,7 @@ class Mlinterface:
         settings = {}
         for line in data:
             if line[0] != "#":
-                settings[line.split("=")[0]] = line.split("=")[1]
+                settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
         return settings
 
     def target_strings_to_int(self, target):
@@ -51,7 +51,7 @@ class Mlinterface:
 
     def write_results(self, output_filename, score, target):
         file = open(output_filename, "w")
-        file.write(self.generate_minimum_result_text(target) + "/n")
+        file.write(self.generate_minimum_result_text(target) + "\n")
         file.write(self.generate_result_text(score))
         file.close()
 

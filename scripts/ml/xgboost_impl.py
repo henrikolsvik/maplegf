@@ -21,7 +21,7 @@ class XGBooster(Mlinterface):
         score, predictions = self.make_predictions(xgb_model, train_sample, train_target, test_sample, test_target,
                                                    test_name)
 
-        self.write_results(output_filename, score)
+        self.write_results(output_filename, score, target)
 
     def load_config(self, config):
         n = int(config["n"])
