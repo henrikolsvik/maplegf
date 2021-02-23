@@ -4,8 +4,11 @@ import re
 import numpy as np
 
 
-def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename, target_output_filename, coverage_key_stats_filename, config_file):
+def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename, target_output_filename,
+                      coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
+                      config_file):
     metadata = read_metadata_file(metadata_filepath)
+    config = read_config(config_file)
     term_type, threshold_abundance, threshold_share = read_config(config_file)
 
     print(sample_output_filename, target_output_filename)
@@ -16,29 +19,30 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename, t
     term_count_by_sample, coverage_statistics = [], []
     sequence_file_list = get_sequence_file_list(sequence_dir, metadata)
 
-    print("Number of sequences: ", len(sequence_file_list))
+    process_values = {"Number of sequences: ": str(len(sequence_file_list))}
 
     for sequence_filename in sequence_file_list:
         sequence_data = read_file(sequence_dir + "/" + sequence_filename)
-        term_list = get_terms(term_type, sequence_data[0])
-        term_count_by_sample.append(count_unique_terms(term_list, term_type))
+        term_list = get_terms(config["term_type"], sequence_data[0])
+        term_count_by_sample.append(count_unique_terms(term_list, config["term_type"]))
         coverage_statistics.append(get_coverage_data(term_list))
 
-    print("Number of terms before filtering: " + str(len(get_unique_terms(term_count_by_sample))))
+    process_values["Number of terms before filtering: "] = str(len(get_unique_terms(term_count_by_sample)))
 
     if sample_output_filename is not None:
-        write_term_count_overview(term_count_by_sample, sample_output_filename + "_term_stats")
+        write_term_count_overview(term_count_by_sample, term_count_unprocessed_filename)
 
     # Method mutates term_count_by_sample
     term_count_by_sample_limited = limit_occurrence_n_in_m_share(term_count_by_sample, threshold_abundance,
                                                                  threshold_share)
 
     # Logging
-    print("Number of terms after filtering: " + str(len(get_unique_terms(term_count_by_sample_limited))))
+    process_values["Number of terms after filtering: "] = str(len(get_unique_terms(term_count_by_sample_limited)))
 
     if sample_output_filename is not None:
         write_terms_to_file(term_count_by_sample_limited, term_count_by_sample_limited, sequence_file_list,
                             sample_output_filename)
+        write_term_count_overview(term_count_by_sample_limited, term_count_unprocessed_filename)
         write_coverage_key_stats(coverage_statistics, sequence_file_list, coverage_key_stats_filename)
 
 
@@ -49,8 +53,8 @@ def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_nam
         sequence_stats.append([sequence_file_list[i], np.std(coverage_statistics[i]), np.mean(coverage_statistics[i])])
         all_coverage += coverage_statistics[i]
 
-    print("all_coverage")
     file = open(output_name, "w")
+    file.write("TERM:,Standard deviation of coverage,Mean coverage\n")
 
     for item in sequence_stats:
         file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2]))
@@ -66,11 +70,11 @@ def get_coverage_data(term_list):
 
 def write_term_count_overview(term_count_by_sample, filename):
     sorted_sum_dict = sum_and_sort_terms(term_count_by_sample)
-    file = open(filename + ".csv", "w")
+    file = open(filename, "w")
+    file.write("TERM:,Count:\n")
     for item in sorted_sum_dict:
         file.write(str(item) + "," + str(sorted_sum_dict[item]) + "\n")
     file.close()
-    return None
 
 
 def sum_and_sort_terms(term_count_by_sample):
@@ -111,8 +115,6 @@ def write_targets_to_file(metadata, sequence_file_list, target_output_filename, 
 
 
 def read_metadata_file(metadata_filepath):
-    metadata = []
-
     file = open(metadata_filepath, "r", encoding="iso-8859-1")
     lines = file.readlines()
     data = []
@@ -120,11 +122,6 @@ def read_metadata_file(metadata_filepath):
         line = lines[i].replace("\n", "")
         data.append(line.split(","))
     file.close()
-
-#    for row in data:
-#        if row[3] == "Baseline":
-#            metadata.append([row[0], row[3], row[8]])
-
     return data
 
 
@@ -261,7 +258,7 @@ def read_config(file):
     settings = {}
     for line in data:
         if line[0] != "#":
-            settings[line.split("=")[0]] = line.split("=")[1]
+            settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
     return settings
 
 
@@ -277,4 +274,5 @@ def get_correct_itemno(term_type):
 
 
 if __name__ == '__main__':
-    run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
+    run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7],
+                      sys.argv[8])
