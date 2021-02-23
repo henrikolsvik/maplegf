@@ -18,7 +18,7 @@ rule preprocess_samples:
         meta="metadata/metadata.csv",
         config="configs/preprocessing_simple.txt"
     output:
-        samp_out="preprocessing_output/processed_samples.csv",
+        samp_out="preprocessing_output/processed_samples_simple.csv",
         stat_out="results/processed_samples_stats.csv",
         term_count_unprocessed="results/unprocessed_samples_term_count.csv",
         term_count_processed="results/processed_samples_term_count.csv"
