@@ -1,2 +1,4 @@
 #XGBOOST CONFIG SIMPLE
 n=10
+
+# DEFAULT: https://xgboost.readthedocs.io/en/latest/parameter.html
