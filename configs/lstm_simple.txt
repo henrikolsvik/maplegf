@@ -1,6 +1,5 @@
 #LSTM CONFIG SIMPLE
 n=10
-
 # Default tf.keras.layers.LSTM(
 #    units, activation='tanh', recurrent_activation='sigmoid',
 #    use_bias=True, kernel_initializer='glorot_uniform',

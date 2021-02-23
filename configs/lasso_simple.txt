@@ -1,5 +1,4 @@
 # LASSO CONFIG SIMPLE
 n=10
-
 # DEFAULT: Lasso(alpha=1.0, *, fit_intercept=True, normalize=False, precompute=False, copy_X=True, max_iter=1000,
 # tol=0.0001, warm_start=False, positive=False, random_state=None, selection='cyclic')
