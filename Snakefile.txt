@@ -5,12 +5,14 @@ rule all:
         "results/results_mlpnn_simple.txt",
         "results/results_random_forest_simple.txt",
         "results/results_xgboost_simple.txt",
-        "results/results_lstm_simple.txt",
-        "results/processed_samples_stats.csv",
-        "results/unprocessed_samples_term_count.csv",
-        "results/processed_samples_term_count.csv",
+#        "results/results_lstm_simple.txt",
+        "preprocessing_output/processed_samples_coverage.csv",
+        "preprocessing_output/unprocessed_samples_term_count.csv",
+        "preprocessing_output/processed_samples_term_count.csv",
         "preprocessing_output/processed_samples_simple.csv",
+        "preprocessing_output/processed_samples_simple_parameter_data.csv",
         "metadata/metadata.csv"
+
 
 rule preprocess_samples:
     input:
@@ -19,21 +21,22 @@ rule preprocess_samples:
         config="configs/preprocessing_simple.txt"
     output:
         samp_out="preprocessing_output/processed_samples_simple.csv",
-        stat_out="results/processed_samples_stats.csv",
-        term_count_unprocessed="results/unprocessed_samples_term_count.csv",
-        term_count_processed="results/processed_samples_term_count.csv"
+        stat_out="preprocessing_output/processed_samples_coverage.csv",
+        term_count_unprocessed="preprocessing_output/unprocessed_samples_term_count.csv",
+        term_count_processed="preprocessing_output/processed_samples_term_count.csv",
+        parameter_data="preprocessing_output/processed_samples_simple_parameter_data.csv"
     shell:
-        "python scripts/term_processing.py {input.samp} {input.meta} {output.samp_out} {output.stat_out} {output.term_count_unprocessed} {output.term_count_processed} {input.config}"
+        "python scripts/term_processing.py {input.samp} {input.meta} {output.samp_out} {output.stat_out} {output.term_count_unprocessed} {output.term_count_processed} {output.parameter_data} {input.config}"
 
 rule ml_lasso:
     input:
         samples="preprocessing_output/processed_samples_simple.csv",
         targets="metadata/metadata.csv",
-        config="configs/lasso_simple.txt"
+        config="configs/lasso_simple.txt",
     output:
-        "results/results_lasso_simple.txt"
+        results_txt = "results/results_lasso_simple.txt",
     shell:
-        "python scripts/ml/lasso.py {input.samples} {input.targets} {output} {input.config}"
+        "python scripts/ml/lasso.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
 
 rule ml_svm:
     input:
@@ -41,9 +44,9 @@ rule ml_svm:
         targets="metadata/metadata.csv",
         config="configs/svm_simple.txt"
     output:
-        "results/results_svm_simple.txt"
+        results_txt = "results/results_svm_simple.txt",
     shell:
-        "python scripts/ml/svm.py {input.samples} {input.targets} {output} {input.config}"
+        "python scripts/ml/svm.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
 
 rule ml_random_forest:
     input:
@@ -51,9 +54,9 @@ rule ml_random_forest:
         targets="metadata/metadata.csv",
         config="configs/random_forest_simple.txt"
     output:
-        "results/results_random_forest_simple.txt"
+        results_txt = "results/results_random_forest_simple.txt",
     shell:
-        "python scripts/ml/random_forest.py {input.samples} {input.targets} {output} {input.config}"
+        "python scripts/ml/random_forest.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
 
 rule ml_mplnn:
     input:
@@ -61,9 +64,9 @@ rule ml_mplnn:
         targets="metadata/metadata.csv",
         config="configs/mlpnn_simple.txt"
     output:
-        "results/results_mlpnn_simple.txt"
+        results_txt = "results/results_mlpnn_simple.txt",
     shell:
-        "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output} {input.config}"
+        "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
 
 rule ml_xgboost:
     input:
@@ -71,9 +74,9 @@ rule ml_xgboost:
         targets="metadata/metadata.csv",
         config="configs/xgboost_simple.txt"
     output:
-        "results/results_xgboost_simple.txt"
+        results_txt = "results/results_xgboost_simple.txt",
     shell:
-        "python scripts/ml/xgboost_impl.py {input.samples} {input.targets} {output} {input.config}"
+        "python scripts/ml/xgboost_impl.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
 
 rule ml_LSTM:
     input:
@@ -81,6 +84,7 @@ rule ml_LSTM:
         targets="metadata/metadata.csv",
         config="configs/lstm_simple.txt"
     output:
-        "results/results_lstm_simple.txt"
+        results_txt = "results/results_lstm_simple.txt",
+        results_csv = "results/combined_results.csv"
     shell:
-        "python scripts/ml/lstm.py {input.samples} {input.targets} {output} {input.config}"
+        "python scripts/ml/lstm.py {input.samples} {input.targets} {output.results_txt} {output.results_csv} {input.config}"
