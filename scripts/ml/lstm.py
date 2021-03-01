@@ -16,7 +16,6 @@ class LSTM(Mlinterface):
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         target = self.targets_to_int(target)
         self.read_config(config_file)
-        n = int(self.config["n"])
 
         bound_samples_and_targets = []
 
@@ -29,13 +28,13 @@ class LSTM(Mlinterface):
                 max_value = int(max(item[1]))+1
 
         train_sample, train_target, test_sample, test_target, test_name = \
-            self.n_split_shuffle(samples_with_names, target, n)
+            self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
 
         score = []
 
         model = Sequential()
-        model.add(layers.Embedding(max_value, 32, input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
-        model.add(layers.LSTM(64))
+        model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
+        model.add(layers.LSTM(int(self.config["LSTM_depth"])))
         model.add(layers.Dense(10000))
         model.summary()
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])

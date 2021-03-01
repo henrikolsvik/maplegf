@@ -20,7 +20,9 @@ class MLPNN(Mlinterface):
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
 
-        clf = MLPClassifier(max_iter=int(self.config["max_iter"]))
+        clf = MLPClassifier(max_iter=int(self.config["max_iter"]),
+                            hidden_layer_sizes=int(self.config["hidden_layer_sizes"]),
+                            alpha=float(self.config["alpha"]))
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
         self.write_results(output_filename, score, target)

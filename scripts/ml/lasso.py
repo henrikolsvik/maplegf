@@ -8,7 +8,7 @@ class Lasso(Mlinterface):
     def machine_learning_service(self, input_samples_file, input_target_file, output_filename, config_file):
 
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
-        n = self.load_config(self.read_config(config_file))
+        self.read_config(config_file)
 
         target = self.target_strings_to_int(target)
 
@@ -18,16 +18,12 @@ class Lasso(Mlinterface):
             bound_samples_and_targets.append([samples_with_names[1][i], samples_with_names[0][i], target[i]])
 
         train_sample, train_target, test_sample, test_target, test_name = \
-            self.n_split_shuffle(samples_with_names, target, n)
+            self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
 
-        clf = linear_model.Lasso(0.1, positive={True}, tol=0.1)
+        clf = linear_model.Lasso(positive=bool(self.config["positive"]), tol=0.1)
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
         self.write_results(output_filename, score, target)
-
-    def load_config(self, config):
-        n = int(config["n"])
-        return n
 
 
 if __name__ == '__main__':

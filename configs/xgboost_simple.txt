@@ -1,3 +1,4 @@
 #XGBOOST CONFIG SIMPLE
-n=10
+n=5
+max_depth=16
 # DEFAULT: https://xgboost.readthedocs.io/en/latest/parameter.html
