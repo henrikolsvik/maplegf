@@ -5,10 +5,7 @@ from ml_interface import Mlinterface
 
 class MLPNN(Mlinterface):
 
-    def __init__(self):
-        super().__init__()
-
-    def machine_learning_service(self, input_samples_file, input_target_file, output_filename, config_file):
+    def machine_learning_service(self, input_samples_file, input_target_file, output_filename, results_spreadsheet, config_file):
 
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         self.read_config(config_file)
@@ -25,9 +22,9 @@ class MLPNN(Mlinterface):
                             alpha=float(self.config["alpha"]))
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
-        self.write_results(output_filename, score, target)
+        self.write_results(output_filename, input_samples_file, results_spreadsheet, score, target)
 
 
 if __name__ == '__main__':
     mlpnn = MLPNN()
-    mlpnn.machine_learning_service(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    mlpnn.machine_learning_service(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])

@@ -6,18 +6,17 @@ import numpy as np
 
 def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
-                      config_file):
+                      parameter_output_filename, config_file):
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
-    term_type, threshold_abundance, threshold_share = read_config(config_file)
 
-    if re.search('../../../Downloads', sample_output_filename):
-        sample_output_filename = sample_output_filename.split(".")[0]
+    #if re.search('../../../Downloads', sample_output_filename):
+    #    sample_output_filename = sample_output_filename.split(".")[0]
 
     term_count_by_sample, coverage_statistics = [], []
     sequence_file_list = get_sequence_file_list(sequence_dir, metadata)
 
-    process_values = {"Number of sequences: ": str(len(sequence_file_list))}
+    process_values = {"Number of samples included: ": str(len(sequence_file_list))}
 
     for sequence_filename in sequence_file_list:
         sequence_data = read_file(sequence_dir + "/" + sequence_filename)
@@ -31,8 +30,9 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
         write_term_count_overview(term_count_by_sample, term_count_unprocessed_filename)
 
     # Method mutates term_count_by_sample
-    term_count_by_sample_limited = limit_occurrence_n_in_m_share(term_count_by_sample, threshold_abundance,
-                                                                 threshold_share)
+    term_count_by_sample_limited = limit_occurrence_n_in_m_share(term_count_by_sample,
+                                                                 float(config["minimum_required_coverage_count"]),
+                                                                 float(config["minimim_share_of_samples_with_minimum_required_coverage_count"]))
 
     # Logging
     process_values["Number of terms after filtering: "] = str(len(get_unique_terms(term_count_by_sample_limited)))
@@ -40,8 +40,17 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
     if sample_output_filename is not None:
         write_terms_to_file(term_count_by_sample_limited, term_count_by_sample_limited, sequence_file_list,
                             sample_output_filename)
-        write_term_count_overview(term_count_by_sample_limited, term_count_unprocessed_filename)
+        write_term_count_overview(term_count_by_sample_limited, term_count_processed_filename)
         write_coverage_key_stats(coverage_statistics, sequence_file_list, coverage_key_stats_filename)
+        write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list, len(os.listdir(sequence_dir)), process_values, config)
+
+
+def write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list, sequence_dir_length, process_values, config):
+    file = open(parameter_output_filename, "w")
+    file.write("Parameter data for: " + sample_output_filename + "\n")
+    file.write(str(process_values))
+    file.write("Total amount of samples included: " + str(len(sequence_file_list)) + "\n")
+    file.write(str(config))
 
 
 def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_name):
@@ -55,7 +64,7 @@ def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_nam
     file.write("TERM:,Standard deviation of coverage,Mean coverage\n")
 
     for item in sequence_stats:
-        file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2]))
+        file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2])+"\n")
     file.close()
 
 
@@ -272,4 +281,5 @@ def get_correct_itemno(term_type):
 
 
 if __name__ == '__main__':
-    run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7])
+    run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7],
+                      sys.argv[8])

@@ -9,10 +9,7 @@ from ml_interface import Mlinterface
 
 class LSTM(Mlinterface):
 
-    def __init__(self):
-        super().__init__()
-
-    def machine_learning_service(self, input_samples_file, input_target_file, output_filename, config_file):
+    def machine_learning_service(self, input_samples_file, input_target_file, output_filename, results_csv_file, config_file):
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         target = self.targets_to_int(target)
         self.read_config(config_file)
@@ -50,9 +47,9 @@ class LSTM(Mlinterface):
             model.fit(iter_train_sample, iter_train_target, batch_size=32, epochs=20)
             score.append(model.evaluate(iter_test_sample, iter_test_target, verbose=2)[1])
 
-        self.write_results(output_filename, score, target)
+        self.write_results(output_filename, input_samples_file, results_csv_file, score, target)
 
 
 if __name__ == '__main__':
     rf = LSTM()
-    rf.machine_learning_service(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    rf.machine_learning_service(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])

@@ -1,6 +1,9 @@
 import sklearn.model_selection
 import time
 import numpy as np
+import datetime
+from filelock import SoftFileLock
+import os.path
 
 
 class Mlinterface:
@@ -55,23 +58,38 @@ class Mlinterface:
 
         return target_int
 
-    def write_results(self, output_filename, score, target):
+    def write_results(self, output_filename, input_samples, results_csv_file, score, target):
+        self.write_txt_results(output_filename, target, score)
+        self.write_csv_results(results_csv_file, input_samples, target, score)
+
+    def write_csv_results(self, results_csv_file, input_samples, target, score):
+        print(type(self))
+        lock = SoftFileLock(results_csv_file + ".lock", timeout=1)
+        with lock.acquire(timeout=1):
+            if not os.path.isfile("results/combined_results.csv"):
+                open("results/combined_results.csv", "a").write("Algorithm;Time;Score;Baseline;Parameters;Samples_name\n")
+            open("results/combined_results.csv", "a").write(
+                type(self).__name__ + ";" + str(datetime.datetime.now()).split('.')[0] + ";" +
+                str(np.array(score).sum() / len(score) * 100) + ";" +
+                str(self.get_baseline_accuracy(target)) + ";" + str(self.config) + ";" + str(input_samples) + ";\n")
+        lock.release()
+
+    def write_txt_results(self, output_filename, target, score):
         file = open(output_filename, "w")
         file.write("FILE: " + output_filename + "\n")
-        file.write(self.generate_minimum_result_text(target) + "\n")
+        file.write("Baseline accuracy: {0:.2f}%".format(self.get_baseline_accuracy(target)) + "\n")
         file.write(self.generate_result_text(score))
         file.write(str(self.config))
         file.close()
 
-    def generate_minimum_result_text(self, target):
+    def get_baseline_accuracy(self, target):
         target_counts = self.count_targets(target)
         max_count, count = 0, 0
         for item in target_counts:
             if target_counts[item] > max_count:
                 max_count = target_counts[item]
             count += target_counts[item]
-        baseline_accuracy = (max_count / count)*100
-        return "Baseline accuracy: {0:.2f}%".format(baseline_accuracy)
+        return (max_count / count) * 100
 
     def generate_result_text(self, score):
         return "Total Accuracy Score Of: " + "{:.2f}".format(np.array(score).sum() / len(score) * 100) \
