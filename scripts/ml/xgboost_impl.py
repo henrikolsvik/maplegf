@@ -5,7 +5,8 @@ import xgboost as xgb
 
 class XGBooster(Mlinterface):
 
-    def machine_learning_service(self, input_samples_file, input_target_file, output_filename, results_spreadsheet, config_file):
+    def machine_learning_service(self, input_samples_file, input_samples_parameters_file, input_target_file,
+                                 output_filename, config_file):
         samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         self.read_config(config_file)
 
@@ -21,7 +22,7 @@ class XGBooster(Mlinterface):
         score, predictions = self.make_predictions(xgb_model, train_sample, train_target, test_sample, test_target,
                                                    test_name)
 
-        self.write_results(output_filename, input_samples_file, results_spreadsheet, score, target)
+        self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
 
 
 if __name__ == '__main__':

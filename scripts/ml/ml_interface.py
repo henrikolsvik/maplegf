@@ -58,21 +58,19 @@ class Mlinterface:
 
         return target_int
 
-    def write_results(self, output_filename, input_samples, results_csv_file, score, target):
+    def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.write_txt_results(output_filename, target, score)
-        self.write_csv_results(results_csv_file, input_samples, target, score)
+        self.write_csv_results(input_samples, input_samples_parameter, target, score)
 
-    def write_csv_results(self, results_csv_file, input_samples, target, score):
+    def write_csv_results(self, input_samples, input_samples_parameter, target, score):
         print(type(self))
-        lock = SoftFileLock(results_csv_file + ".lock", timeout=1)
-        with lock.acquire(timeout=1):
-            if not os.path.isfile("results/combined_results.csv"):
-                open("results/combined_results.csv", "a").write("Algorithm;Time;Score;Baseline;Parameters;Samples_name\n")
-            open("results/combined_results.csv", "a").write(
-                type(self).__name__ + ";" + str(datetime.datetime.now()).split('.')[0] + ";" +
-                str(np.array(score).sum() / len(score) * 100) + ";" +
-                str(self.get_baseline_accuracy(target)) + ";" + str(self.config) + ";" + str(input_samples) + ";\n")
-        lock.release()
+        if not os.path.isfile("results/combined_results.csv"):
+            open("results/combined_results.csv", "a").write("Algorithm;Time;Score;Score_STD;Baseline;Parameters;Samples_name;Preprocessing_config\n")
+        open("results/combined_results.csv", "a").write(
+            type(self).__name__ + ";" + str(datetime.datetime.now()).split('.')[0] + ";" +
+            str(np.array(score).sum() / len(score)) + ";" + str(np.array(score).std()) + ";" +
+            str(self.get_baseline_accuracy(target)) + ";" + str(self.config) + ";" + str(input_samples) + ";" +
+            str([str(x).replace("\n", "") for x in (open(input_samples_parameter, "r").readlines())]) + "\n")
 
     def write_txt_results(self, output_filename, target, score):
         file = open(output_filename, "w")
