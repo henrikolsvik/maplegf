@@ -1,4 +1,4 @@
-#PREPROCESSING CONFIG SIMPLE
+#PREPROCESSING HUMANN CONFIG SIMPLE
 term_type=IPR
 minimum_required_coverage_count=500
 minimim_share_of_samples_with_minimum_required_coverage_count=0.8
