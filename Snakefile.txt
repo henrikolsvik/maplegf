@@ -28,6 +28,9 @@ rule preprocess_samples:
     shell:
         "python scripts/term_processing.py {input.samp} {input.meta} {output.samp_out} {output.stat_out} {output.term_count_unprocessed} {output.term_count_processed} {output.parameter_data} {input.config}"
 
+samples = "preprocessing_output/processed_samples_simple.csv"
+samples_parameters = "preprocessing_output/processed_samples_simple_parameter_data.csv"
+
 rule ml_lasso:
     input:
         samples="preprocessing_output/processed_samples_simple.csv",
@@ -36,7 +39,7 @@ rule ml_lasso:
     output:
         results_txt = "results/results_lasso_simple.txt",
     shell:
-        "python scripts/ml/lasso.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
+        "python scripts/ml/lasso.py {samples} {samples_parameters} {input.targets} {output.results_txt} {input.config}"
 
 rule ml_svm:
     input:
@@ -46,7 +49,7 @@ rule ml_svm:
     output:
         results_txt = "results/results_svm_simple.txt",
     shell:
-        "python scripts/ml/svm.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
+        "python scripts/ml/svm.py {samples} {samples_parameters} {input.targets} {output.results_txt} {input.config}"
 
 rule ml_random_forest:
     input:
@@ -56,7 +59,7 @@ rule ml_random_forest:
     output:
         results_txt = "results/results_random_forest_simple.txt",
     shell:
-        "python scripts/ml/random_forest.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
+        "python scripts/ml/random_forest.py {samples} {samples_parameters} {input.targets} {output.results_txt} {input.config}"
 
 rule ml_mplnn:
     input:
@@ -66,7 +69,7 @@ rule ml_mplnn:
     output:
         results_txt = "results/results_mlpnn_simple.txt",
     shell:
-        "python scripts/ml/mlpnn.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
+        "python scripts/ml/mlpnn.py {samples} {samples_parameters} {input.targets} {output.results_txt} {input.config}"
 
 rule ml_xgboost:
     input:
@@ -76,7 +79,7 @@ rule ml_xgboost:
     output:
         results_txt = "results/results_xgboost_simple.txt",
     shell:
-        "python scripts/ml/xgboost_impl.py {input.samples} {input.targets} {output.results_txt} a {input.config}"
+        "python scripts/ml/xgboost_impl.py {samples} {samples_parameters} {input.targets} {output.results_txt} {input.config}"
 
 rule ml_LSTM:
     input:
@@ -87,4 +90,4 @@ rule ml_LSTM:
         results_txt = "results/results_lstm_simple.txt",
         results_csv = "results/combined_results.csv"
     shell:
-        "python scripts/ml/lstm.py {input.samples} {input.targets} {output.results_txt} {output.results_csv} {input.config}"
+        "python scripts/ml/lstm.py {samples} {samples_parameters} {input.targets} {output.results_txt} {input.config}"
