@@ -9,10 +9,6 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
                       parameter_output_filename, config_file):
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
-
-    #if re.search('../../../Downloads', sample_output_filename):
-    #    sample_output_filename = sample_output_filename.split(".")[0]
-
     term_count_by_sample, coverage_statistics = [], []
 
     sequence_data = read_file(sequence_filename)
@@ -23,9 +19,9 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
                 sequence_data.remove(sequence)
 
     for sequence in sequence_data:
-        term_list = get_terms(config["term_type"], sequence)
+        term_list = get_terms(sequence)
         term_count_by_sample.append(count_unique_terms(term_list, config["term_type"]))
-        #coverage_statistics.append(get_coverage_data(term_list))
+        # coverage_statistics.append(get_coverage_data(term_list))
 
     process_values = {"Number of samples included: ": str(len(sequence_data))}
 
@@ -206,23 +202,20 @@ def read_file(filename):
     file.close()
     data = []
     for i in range(0, len(lines)):
-        line = lines[i].replace("\n", "").split("\t")
-        for q in range(0, len(line)):
-            data[q].append(line[q])
+        if i != 1 and i != 2:
+            data.append(lines[i].replace("\n", "").split("\t"))
 
-    print("help me")
+    data_transposed = np.transpose(np.array(data))
 
-    del data[0]
-    return [data, filename]
+    return data_transposed
 
 
-def get_terms(term_type, data):
-    item_no = get_correct_itemno(term_type)
+def get_terms(data):
 
     term_list = []
     for items in data:
         term_list.append(
-            [float(items[0].split("_")[5]), items[item_no].replace('"NA"', '').replace('"', '').split(',')])
+            [float(items[0].split("_")[5]), items[0].replace('"NA"', '').replace('"', '').split(',')])
 
     return term_list
 
