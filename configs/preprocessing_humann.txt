@@ -1,5 +1,5 @@
 #PREPROCESSING HUMANN CONFIG SIMPLE
-minimum_required_coverage_count=50
+minimum_required_coverage_count=10
 minimim_share_of_samples_with_minimum_required_coverage_count=0.5
 #minimum_required_coverage_count=50
 #minimim_share_of_samples_with_minimum_required_coverage_count=0.7

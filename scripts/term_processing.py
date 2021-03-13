@@ -6,7 +6,7 @@ import numpy as np
 
 def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
-                      parameter_output_filename, config_file):
+                      parameter_output_filename, metadata_out_filename, config_file):
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
 
@@ -14,9 +14,11 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
     #    sample_output_filename = sample_output_filename.split(".")[0]
 
     term_count_by_sample, coverage_statistics = [], []
-    sequence_file_list = get_sequence_file_list(sequence_dir, metadata)
+    sequence_file_list = get_sequence_file_list(sequence_dir, metadata, metadata_out_filename)
 
     process_values = {"Number of samples included: ": str(len(sequence_file_list))}
+
+
 
     for sequence_filename in sequence_file_list:
         sequence_data = read_file(sequence_dir + "/" + sequence_filename)
@@ -49,7 +51,6 @@ def write_preprocessing_parameter_data(parameter_output_filename, sample_output_
     file = open(parameter_output_filename, "w")
     file.write("Parameter data for: " + sample_output_filename + "\n")
     file.write(str(process_values))
-    file.write("Total amount of samples included: " + str(len(sequence_file_list)) + "\n")
     file.write(str(config))
 
 
@@ -97,12 +98,14 @@ def sum_and_sort_terms(term_count_by_sample):
     return {key: value for key, value in sorted(sum_dict.items(), key=lambda item: item[1], reverse=True)}
 
 
-def get_sequence_file_list(sequence_dir, metadata):
+def get_sequence_file_list(sequence_dir, metadata, metadata_out_filename):
     file_list = []
+    metadata_out = open(metadata_out_filename, "a+")
     for sequence in metadata:
         for filename in os.listdir(sequence_dir):
             if sequence[0] in filename:
                 file_list.append(filename)
+                metadata_out.write(str(sequence[0]) + "," + str(sequence[1]) + "\n")
     return file_list
 
 
@@ -282,4 +285,4 @@ def get_correct_itemno(term_type):
 
 if __name__ == '__main__':
     run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7],
-                      sys.argv[8])
+                      sys.argv[8], sys.argv[9])

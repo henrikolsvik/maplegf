@@ -6,10 +6,10 @@ import numpy as np
 
 def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
-                      parameter_output_filename, config_file):
+                      parameter_output_filename, metadata_out_filename, config_file):
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
-    term_count_by_sample, coverage_statistics = [], []
+    term_count_by_sample, coverage_statistics, sequences = [], [], []
 
     sequence_data = read_file(sequence_filename)
 
@@ -18,15 +18,18 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
 
     num_of_sequences = len(sequence_data)
 
-    metadata_sequences = [x[0] for x in metadata]
+    metadata_out = open(metadata_out_filename, "a+")
 
-    for sequence in sequence_data:
-        if not sequence[0] in metadata_sequences:
-            sequence_data.remove(sequence)
+    for metadata_item in metadata:
+        for sequence in sequence_data:
+            if metadata_item[0] == sequence[0]:
+                metadata_out.write(str(metadata_item[0]) + "," + str(metadata_item[1]) + "\n")
+                sequences.append(sequence)
 
+    metadata_out.close()
     samples = []
 
-    for sequence in sequence_data:
+    for sequence in sequences:
         samples.append(sequence[0])
         term_count_by_sample.append(count_unique_terms(sequence, term_list))
         # coverage_statistics.append(get_coverage_data(term_list))
@@ -270,4 +273,4 @@ def read_config(file):
 
 if __name__ == '__main__':
     run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7],
-                      sys.argv[8])
+                      sys.argv[8], sys.argv[9])
