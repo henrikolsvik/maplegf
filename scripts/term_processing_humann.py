@@ -12,17 +12,22 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
     term_count_by_sample, coverage_statistics = [], []
 
     sequence_data = read_file(sequence_filename)
-    num_of_sequences = len(sequence_data)
-
-    for sequence in sequence_data:
-        for metadata_sequence in metadata:
-            if metadata_sequence[0] in sequence[0]:
-                sequence_data.remove(sequence)
 
     term_list = sequence_data[0][1:]
     del sequence_data[0]
-    for sequence in sequence_data:
 
+    num_of_sequences = len(sequence_data)
+
+    metadata_sequences = [x[0] for x in metadata]
+
+    for sequence in sequence_data:
+        if not sequence[0] in metadata_sequences:
+            sequence_data.remove(sequence)
+
+    samples = []
+
+    for sequence in sequence_data:
+        samples.append(sequence[0])
         term_count_by_sample.append(count_unique_terms(sequence, term_list))
         # coverage_statistics.append(get_coverage_data(term_list))
 
@@ -36,24 +41,27 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
     # Method mutates term_count_by_sample
     term_count_by_sample_limited = limit_occurrence_n_in_m_share(term_count_by_sample,
                                                                  float(config["minimum_required_coverage_count"]),
-                                                                 float(config["minimim_share_of_samples_with_minimum_required_coverage_count"]))
+                                                                 float(config[
+                                                                           "minimim_share_of_samples_with_minimum_required_coverage_count"]))
 
     # Logging
     process_values["Number of terms after filtering: "] = str(len(get_unique_terms(term_count_by_sample_limited)))
 
     if sample_output_filename is not None:
-        write_terms_to_file(term_count_by_sample_limited, term_count_by_sample_limited, sequence_filename,
+        write_terms_to_file(term_count_by_sample_limited, term_count_by_sample_limited, samples,
                             sample_output_filename)
         write_term_count_overview(term_count_by_sample_limited, term_count_processed_filename)
         write_coverage_key_stats(coverage_statistics, sequence_filename, coverage_key_stats_filename)
-        write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_filename, num_of_sequences, process_values, config)
+        write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, num_of_sequences,
+                                           process_values, config)
 
 
-def write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list, num_of_sequences, process_values, config):
+def write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, num_of_sequences,
+                                       process_values, config):
     file = open(parameter_output_filename, "w")
     file.write("Parameter data for: " + sample_output_filename + "\n")
     file.write(str(process_values))
-    file.write("Total amount of samples included: " + str(len(sequence_file_list)) + "\n")
+    file.write("Total amount of samples included: " + str(num_of_sequences) + "\n")
     file.write(str(config))
 
 
@@ -68,7 +76,7 @@ def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_nam
     file.write("TERM:,Standard deviation of coverage,Mean coverage\n")
 
     for item in sequence_stats:
-        file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2])+"\n")
+        file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2]) + "\n")
     file.close()
 
 
@@ -211,16 +219,6 @@ def read_file(filename):
     return np.transpose(np.array(data)).tolist()
 
 
-#def get_terms(data):
-#
-#    term_list = []
- #   for items in data:
-  #      term_list.append(
- #           [float(items[0].split("_")[5]), items[0].replace('"NA"', '').replace('"', '').split(',')])
-#
- #   return term_list
-
-
 def get_unique_terms(term_count_by_sample):
     unique_terms = []
     for sample in term_count_by_sample:
@@ -232,7 +230,7 @@ def get_unique_terms(term_count_by_sample):
 def count_unique_terms(data, sorted_terms):
     term_count_dict = {}
     for i in range(0, len(sorted_terms)):
-        term_count_dict[sorted_terms[i]] = float(data[i+1])
+        term_count_dict[sorted_terms[i]] = float(data[i + 1])
 
     return term_count_dict
 
@@ -268,6 +266,7 @@ def read_config(file):
         if line[0] != "#":
             settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
     return settings
+
 
 if __name__ == '__main__':
     run_preprocessing(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7],
