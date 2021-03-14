@@ -33,7 +33,7 @@ class LSTM(Mlinterface):
         model = Sequential()
         model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
         model.add(layers.LSTM(int(self.config["LSTM_depth"])))
-        model.add(layers.Dense(10000))
+        model.add(layers.Dense(max_value))
         model.summary()
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
