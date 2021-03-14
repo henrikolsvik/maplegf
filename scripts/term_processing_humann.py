@@ -21,7 +21,6 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
     metadata_out = open(metadata_out_filename, "a+")
     for metadata_item in metadata:
         for sequence in sequence_data:
-            print(metadata_item, sequence[0])
             if metadata_item[0] in sequence[0] and sequence[0] not in [x[0] for x in sequences]:
                 metadata_out.write(str(metadata_item[0]) + "," + str(metadata_item[1]) + "\n")
                 sequences.append(sequence)
@@ -64,9 +63,9 @@ def write_preprocessing_parameter_data(parameter_output_filename, sample_output_
                                        process_values, config):
     file = open(parameter_output_filename, "w")
     file.write("Parameter data for: " + sample_output_filename + "\n")
-    file.write(str(process_values))
-    file.write("Total amount of samples included: " + str(num_of_sequences) + "\n")
+    file.write(str(process_values) + "\n")
     file.write(str(config))
+    file.close()
 
 
 def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_name):

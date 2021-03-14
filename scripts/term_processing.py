@@ -50,8 +50,9 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
 def write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list, sequence_dir_length, process_values, config):
     file = open(parameter_output_filename, "w")
     file.write("Parameter data for: " + sample_output_filename + "\n")
-    file.write(str(process_values))
+    file.write(str(process_values) + "\n")
     file.write(str(config))
+    file.close()
 
 
 def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_name):
