@@ -49,6 +49,7 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
 
     # Logging
     process_values["Number of terms after filtering: "] = str(len(get_unique_terms(term_count_by_sample_limited)))
+    print(process_values)
 
     if sample_output_filename is not None:
         write_terms_to_file(term_count_by_sample_limited, term_count_by_sample_limited, samples,
@@ -187,7 +188,7 @@ def limit_occurrence_n_in_m_share(term_count_by_sample_input, threshold_abundanc
 def write_terms_to_file(term_count_by_sample, unique_terms, sample_filenames, filename):
     file = open(filename, "w")
     file.write("Samples: ")
-
+    print(unique_terms)
     for term in unique_terms[0]:
         file.write("," + term)
     file.write("\n")
