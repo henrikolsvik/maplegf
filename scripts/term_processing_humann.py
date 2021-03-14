@@ -22,7 +22,7 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
 
     for metadata_item in metadata:
         for sequence in sequence_data:
-            if metadata_item[0] == sequence[0] or sequence[0] == "UNMAPPED" or sequence[0] == "MAPPED":
+            if sequence[0] in metadata_item[0] and sequence[0] not in [x[0] for x in sequences]:
                 metadata_out.write(str(metadata_item[0]) + "," + str(metadata_item[1]) + "\n")
                 sequences.append(sequence)
 
