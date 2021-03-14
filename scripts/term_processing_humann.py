@@ -15,14 +15,14 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
 
     term_list = sequence_data[0][1:]
     del sequence_data[0]
-
     num_of_sequences = len(sequence_data)
 
-    metadata_out = open(metadata_out_filename, "a+")
 
+    metadata_out = open(metadata_out_filename, "a+")
     for metadata_item in metadata:
         for sequence in sequence_data:
-            if sequence[0] in metadata_item[0] and sequence[0] not in [x[0] for x in sequences]:
+            print(metadata_item, sequence[0])
+            if metadata_item[0] in sequence[0] and sequence[0] not in [x[0] for x in sequences]:
                 metadata_out.write(str(metadata_item[0]) + "," + str(metadata_item[1]) + "\n")
                 sequences.append(sequence)
 
