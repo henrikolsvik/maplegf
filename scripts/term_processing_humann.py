@@ -22,7 +22,7 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
 
     for metadata_item in metadata:
         for sequence in sequence_data:
-            if metadata_item[0] == sequence[0]:
+            if metadata_item[0] == sequence[0] or sequence[0] == "UNMAPPED" or sequence[0] == "MAPPED":
                 metadata_out.write(str(metadata_item[0]) + "," + str(metadata_item[1]) + "\n")
                 sequences.append(sequence)
 
@@ -216,8 +216,7 @@ def read_file(filename):
     file.close()
     data = []
     for i in range(0, len(lines)):
-        if i != 1 and i != 2:
-            data.append(lines[i].replace("\n", "").split("\t"))
+        data.append(lines[i].replace("\n", "").split("\t"))
 
     return np.transpose(np.array(data)).tolist()
 
