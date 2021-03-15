@@ -1,12 +1,16 @@
 import sys
 import os
 import re
+import datetime
 import numpy as np
 
 
 def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
                       parameter_output_filename, metadata_out_filename, config_file):
+
+    process_values = {"Start_time: ": str(datetime.datetime.now())}
+
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
     term_count_by_sample, coverage_statistics, sequences = [], [], []
@@ -16,6 +20,9 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
     term_list = sequence_data[0][1:]
     del sequence_data[0]
     num_of_sequences = len(sequence_data)
+
+    process_values["Number of samples available: "] = num_of_sequences
+    process_values["Number of metadata items: "] = str(len(metadata))
 
     metadata_out = open(metadata_out_filename, "a+")
     for metadata_item in metadata:
@@ -32,7 +39,7 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
         term_count_by_sample.append(count_unique_terms(sequence, term_list))
         # coverage_statistics.append(get_coverage_data(term_list))
 
-    process_values = {"Number of samples included: ": str(len(sequence_data))}
+    process_values["Number of samples included: "] = str(len(sequence_data))
 
     process_values["Number of terms before filtering: "] = str(len(get_unique_terms(term_count_by_sample)))
 
@@ -54,6 +61,9 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
                             sample_output_filename)
         write_term_count_overview(term_count_by_sample_limited, term_count_processed_filename)
         write_coverage_key_stats(coverage_statistics, sequence_filename, coverage_key_stats_filename)
+
+        process_values["End time: "] = str(datetime.datetime.now())
+
         write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, num_of_sequences,
                                            process_values, config)
 

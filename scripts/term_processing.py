@@ -1,24 +1,23 @@
 import sys
 import os
-import re
+import datetime
 import numpy as np
 
 
 def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
                       parameter_output_filename, metadata_out_filename, config_file):
+    process_values = {"Start_time: ": str(datetime.datetime.now())}
+
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
-
-    #if re.search('../../../Downloads', sample_output_filename):
-    #    sample_output_filename = sample_output_filename.split(".")[0]
 
     term_count_by_sample, coverage_statistics = [], []
     sequence_file_list = get_sequence_file_list(sequence_dir, metadata, metadata_out_filename)
 
-    process_values = {"Number of samples included: ": str(len(sequence_file_list))}
-
-
+    process_values["Number of samples available: "] = str(len(os.listdir(sequence_dir)))
+    process_values["Number of samples included: "] = str(len(sequence_file_list))
+    process_values["Number of metadata items: "] = str(len(metadata))
 
     for sequence_filename in sequence_file_list:
         sequence_data = read_file(sequence_dir + "/" + sequence_filename)
@@ -34,7 +33,8 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
     # Method mutates term_count_by_sample
     term_count_by_sample_limited = limit_occurrence_n_in_m_share(term_count_by_sample,
                                                                  float(config["minimum_required_coverage_count"]),
-                                                                 float(config["minimim_share_of_samples_with_minimum_required_coverage_count"]))
+                                                                 float(config[
+                                                                           "minimim_share_of_samples_with_minimum_required_coverage_count"]))
 
     # Logging
     process_values["Number of terms after filtering: "] = str(len(get_unique_terms(term_count_by_sample_limited)))
@@ -44,10 +44,15 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
                             sample_output_filename)
         write_term_count_overview(term_count_by_sample_limited, term_count_processed_filename)
         write_coverage_key_stats(coverage_statistics, sequence_file_list, coverage_key_stats_filename)
-        write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list, len(os.listdir(sequence_dir)), process_values, config)
+
+        process_values["End time: "] = str(datetime.datetime.now())
+
+        write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list,
+                                           len(os.listdir(sequence_dir)), process_values, config)
 
 
-def write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list, sequence_dir_length, process_values, config):
+def write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list,
+                                       sequence_dir_length, process_values, config):
     file = open(parameter_output_filename, "w")
     file.write("Parameter data for: " + sample_output_filename + "\n")
     file.write(str(process_values) + "\n")
@@ -66,7 +71,7 @@ def write_coverage_key_stats(coverage_statistics, sequence_file_list, output_nam
     file.write("TERM:,Standard deviation of coverage,Mean coverage\n")
 
     for item in sequence_stats:
-        file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2])+"\n")
+        file.write(str(item[0]) + "," + str(item[1]) + "," + str(item[2]) + "\n")
     file.close()
 
 
