@@ -31,7 +31,7 @@ class LSTM(Mlinterface):
         score = []
 
         model = Sequential()
-        model.add(layers.Embedding(len(train_sample[0][0])+1, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
+        model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
         model.add(layers.LSTM(int(self.config["LSTM_depth"])))
         model.add(layers.Dense(int(self.config["denselayer_size"])))
         model.summary()
