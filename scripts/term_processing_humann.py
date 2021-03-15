@@ -186,7 +186,6 @@ def limit_occurrence_n_in_m_share(term_count_by_sample_input, threshold_abundanc
 def write_terms_to_file(term_count_by_sample, unique_terms, sample_filenames, filename):
     file = open(filename, "w")
     file.write("Samples: ")
-    print(unique_terms)
     for term in unique_terms[0]:
         file.write("," + term)
     file.write("\n")
