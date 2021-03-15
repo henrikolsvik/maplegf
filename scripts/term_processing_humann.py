@@ -11,12 +11,11 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
     config = read_config(config_file)
     term_count_by_sample, coverage_statistics, sequences = [], [], []
 
-    sequence_data = read_file(sequence_filename)
+    sequence_data = read_file(sequence_filename, config)
 
     term_list = sequence_data[0][1:]
     del sequence_data[0]
     num_of_sequences = len(sequence_data)
-
 
     metadata_out = open(metadata_out_filename, "a+")
     for metadata_item in metadata:
@@ -210,13 +209,17 @@ def read_all_files(filepath):
     return data
 
 
-def read_file(filename):
+def read_file(filename, config):
     file = open(filename, "r")
     lines = file.readlines()
     file.close()
     data = []
     for i in range(0, len(lines)):
-        data.append(lines[i].replace("\n", "").split("\t"))
+        if not bool(config["include_mapped_and_unmapped"]):
+            data.append(lines[i].replace("\n", "").split("\t"))
+        else:
+            if i != 1 and i != 2:
+                data.append(lines[i].replace("\n", "").split("\t"))
 
     return np.transpose(np.array(data)).tolist()
 
