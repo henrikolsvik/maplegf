@@ -3,6 +3,7 @@ import time
 import numpy as np
 import datetime
 import os.path
+from sklearn.feature_selection import SelectKBest, SelectPercentile
 
 
 class Mlinterface:
@@ -125,6 +126,27 @@ class Mlinterface:
 
         return data
 
+    def do_usf(self, input_samples, target):
+        if self.config["ufs_stage"] == "pre":
+            samples = []
+            for i in range(0, len(input_samples[0])):
+                samples.append(input_samples[0][i])
+                target[i] = int(target[i])
+        else:
+            samples = input_samples
+
+        if self.config["ufs_type"] == "percent":
+            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples, target)
+        elif self.config["ufs_type"] == "count":
+            filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target)
+
+        if self.config["ufs_stage"] == "pre":
+            names = []
+            for i in range(0, len(input_samples[0])):
+                names.append(input_samples[1][i])
+            return [filtered_terms, names]
+        return filtered_terms
+
     def make_predictions(self, clf, train_sample, train_target, test_sample, test_target, test_name):
         predictions, score = [], []
         for i in range(0, len(train_sample)):
@@ -157,11 +179,17 @@ class Mlinterface:
 
             for item in items[0]:
                 train_add_sample.append(bound_samples_and_targets[item][1])
-                train_add_target.append(bound_samples_and_targets[item][2])
+                train_add_target.append(int(bound_samples_and_targets[item][2]))
             for item in items[1]:
                 test_add_name.append(bound_samples_and_targets[item][0])
                 test_add_sample.append(bound_samples_and_targets[item][1])
-                test_add_target.append(bound_samples_and_targets[item][2])
+                test_add_target.append(int(bound_samples_and_targets[item][2]))
+
+            if self.config["ufs_stage"] == "kfold":
+                train = self.do_usf(train_add_sample, train_add_target)
+                train_add_sample = train
+                test = self.do_usf(test_add_sample, test_add_target)
+                test_add_sample = test
 
             train_sample.append(train_add_sample)
             train_target.append(train_add_target)

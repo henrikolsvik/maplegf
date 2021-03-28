@@ -65,7 +65,7 @@ targets_ipr = "preprocessing_output/metadata_interproscan.csv"
 
 targets_humann = "preprocessing_output/metadata_humann.csv"
 samples_humann = "preprocessing_output/processed_samples_humann.csv"
-samples_parameters_humann = "preprocessing_output/processed_samples_interproscan_parameter_data.csv"
+samples_parameters_humann = "preprocessing_output/processed_samples_humann_parameter_data.csv"
 
 rule ml_lasso:
     input:
