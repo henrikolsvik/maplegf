@@ -10,6 +10,7 @@ class Mlinterface:
 
     def __init__(self):
         self.config = None
+        self.timekeeping = {"Start_time:": datetime.datetime.now()}
 
     def count_targets(self, target):
         num_targets = {}
@@ -59,17 +60,25 @@ class Mlinterface:
         return target_int
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
+        self.timekeeping["End_time:"] = datetime.datetime.now()
+        self.timekeeping["Total_time:"] = (self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
         self.write_txt_results(output_filename, target, score)
         self.write_csv_results(input_samples, input_samples_parameter, target, score)
 
     def write_csv_results(self, input_samples, input_samples_parameter, target, score):
         print(type(self))
         if not os.path.isfile("results/combined_results.csv"):
-            open("results/combined_results.csv", "a").write("Algorithm;Time;Score;Score_STD;Baseline;Parameters;Samples_name;Preprocessing_config\n")
+            open("results/combined_results.csv", "a").write("Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Parameters;Samples_name;Preprocessing_config\n")
         open("results/combined_results.csv", "a").write(
-            type(self).__name__ + ";" + str(datetime.datetime.now()).split('.')[0] + ";" +
-            str(np.array(score).sum() / len(score)) + ";" + str(np.array(score).std()) + ";" +
-            str(self.get_baseline_accuracy(target)) + ";" + str(self.config) + ";" + str(input_samples) + ";" +
+            type(self).__name__ + ";" +
+            str(self.timekeeping["Total_time:"]) + ";" +
+            str(np.array(score).sum() / len(score)) + ";" +
+            str(np.array(score).std()) + ";" +
+            str(self.get_baseline_accuracy(target)) + ";" +
+            str(self.timekeeping["Start_time:"]) + ";" +
+            str(self.timekeeping["End_time:"]) + ";" +
+            str(self.config) + ";" +
+            str(input_samples) + ";" +
             str([str(x).replace("\n", "") for x in (open(input_samples_parameter, "r").readlines())]) + "\n")
 
     def write_txt_results(self, output_filename, target, score):
@@ -94,6 +103,7 @@ class Mlinterface:
                + "%.\n" + "Results of individual runs: " + str(score) + "\n**** \nConfig:\n"
 
     def load_files(self, input_samples_file, input_target_file):
+
         return Mlinterface.read_sample_file(self, input_samples_file), Mlinterface.read_target_file(self,
                                                                                                     input_target_file)
 

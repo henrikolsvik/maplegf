@@ -7,7 +7,7 @@ import numpy as np
 def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
                       parameter_output_filename, metadata_out_filename, config_file):
-    process_values = {"Start_time: ": str(datetime.datetime.now())}
+    process_values = {"Start_time:": datetime.datetime.now()}
 
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
@@ -45,7 +45,11 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
         write_term_count_overview(term_count_by_sample_limited, term_count_processed_filename)
         write_coverage_key_stats(coverage_statistics, sequence_file_list, coverage_key_stats_filename)
 
-        process_values["End time: "] = str(datetime.datetime.now())
+        process_values["End_time:"] = datetime.datetime.now()
+        elapsed_time = process_values["End_time:"] - process_values["Start_time:"]
+        process_values["Total_time"] = elapsed_time.total_seconds()
+        process_values["End_time:"] = str(process_values["End_time:"])
+        process_values["Start_time:"] = str(process_values["Start_time:"])
 
         write_preprocessing_parameter_data(parameter_output_filename, sample_output_filename, sequence_file_list,
                                            len(os.listdir(sequence_dir)), process_values, config)
