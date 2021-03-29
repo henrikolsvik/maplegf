@@ -43,22 +43,6 @@ class Mlinterface:
                 settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
         self.config = settings
 
-    def target_strings_to_int(self, target):
-        target_int = []
-
-        target_set = set(target)
-        if len(target_set) == 2:
-            for i in range(0, len(target)):
-                if target[i] == "M":
-                    target[i] = 1
-                else:
-                    target[i] = "0"
-
-        for item in target:
-            target_int.append(int(item))
-
-        return target_int
-
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()
         self.timekeeping["Total_time:"] = (self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()

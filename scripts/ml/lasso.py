@@ -1,6 +1,7 @@
 import sys
 from sklearn import linear_model
 from ml_interface import Mlinterface
+import sklearn.linear_model
 
 
 class Lasso(Mlinterface):
@@ -9,8 +10,6 @@ class Lasso(Mlinterface):
                                  output_filename, config_file):
         read_samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         self.read_config(config_file)
-
-        target = self.target_strings_to_int(target)
 
         if self.config["ufs_stage"] == "pre":
             samples_with_names = self.do_usf(read_samples_with_names, target)
@@ -23,7 +22,14 @@ class Lasso(Mlinterface):
         clf = linear_model.Lasso(positive=bool(self.config["positive"]), tol=0.1)
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
-        self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
+        auc_scores = []
+        for i in range(0, len(predictions)):
+            try:
+                auc_scores.append(sklearn.metrics.auc(predictions[i][2], predictions[i][1]))
+            except:
+                auc_scores.append(0)
+
+        self.write_results(output_filename, input_samples_file, input_samples_parameters_file, auc_scores, target)
 
 
 if __name__ == '__main__':
