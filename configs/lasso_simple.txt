@@ -5,6 +5,6 @@ positive=True
 ufs_type=count
 ufs_number=1
 #ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
-ufs_stage=pre
+ufs_stage=none
 # DEFAULT: Lasso(alpha=1.0, *, fit_intercept=True, normalize=False, precompute=False, copy_X=True, max_iter=1000,
 # tol=0.0001, warm_start=False, positive=False, random_state=None, selection='cyclic')

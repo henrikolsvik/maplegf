@@ -3,11 +3,14 @@ n=5
 embedding=32
 LSTM_depth=32
 denselayer_size=10
-#Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
+# Regularization
+l2_regularization=True
+regularization_weight=0.001
+# Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
 ufs_type=count
 ufs_number=1
-#ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
-ufs_stage=pre
+# ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
+ufs_stage=none
 # Default tf.keras.layers.LSTM(
 #    units, activation='tanh', recurrent_activation='sigmoid',
 #    use_bias=True, kernel_initializer='glorot_uniform',

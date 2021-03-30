@@ -3,6 +3,7 @@ import sys
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.python.keras.models import Sequential
+from tensorflow.keras import regularizers
 
 from ml_interface import Mlinterface
 
@@ -37,7 +38,11 @@ class LSTM(Mlinterface):
 
         model = Sequential()
         model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
-        model.add(layers.LSTM(int(self.config["LSTM_depth"])))
+        if bool(self.config["l2_regularization"]):
+            model.add(layers.LSTM(int(self.config["LSTM_depth"]),
+                                  kernel_regularizer=regularizers.l2(int(self.config["regularization_weight"]))))
+        else:
+            model.add(layers.LSTM(int(self.config["LSTM_depth"])))
         model.add(layers.Dense(int(self.config["denselayer_size"])))
         model.summary()
         model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])

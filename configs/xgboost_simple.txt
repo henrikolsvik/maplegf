@@ -5,5 +5,5 @@ max_depth=16
 ufs_type=count
 ufs_number=1
 #ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
-ufs_stage=pre
+ufs_stage=none
 # DEFAULT: https://xgboost.readthedocs.io/en/latest/parameter.html

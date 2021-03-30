@@ -5,7 +5,7 @@ C=1.0
 ufs_type=count
 ufs_number=1
 #ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
-ufs_stage=pre
+ufs_stage=none
 # Default:
 # (*, C=1.0, kernel='rbf', degree=3, gamma='scale', coef0=0.0, shrinking=True, probability=False, tol=0.001,
 # cache_size=200, class_weight=None, verbose=False, max_iter=- 1, decision_function_shape='ovr', break_ties=False,
