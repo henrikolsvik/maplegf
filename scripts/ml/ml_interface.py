@@ -173,11 +173,11 @@ class Mlinterface:
 
             for item in items[0]:
                 train_add_sample.append(bound_samples_and_targets[item][1])
-                train_add_target.append(int(bound_samples_and_targets[item][2]))
+                train_add_target.append(bound_samples_and_targets[item][2])
             for item in items[1]:
                 test_add_name.append(bound_samples_and_targets[item][0])
                 test_add_sample.append(bound_samples_and_targets[item][1])
-                test_add_target.append(int(bound_samples_and_targets[item][2]))
+                test_add_target.append(bound_samples_and_targets[item][2])
 
             if self.config["ufs_stage"] == "kfold":
                 train = self.do_usf(train_add_sample, train_add_target)
