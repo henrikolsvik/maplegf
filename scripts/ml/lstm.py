@@ -40,7 +40,7 @@ class LSTM(Mlinterface):
         model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
         if bool(self.config["l2_regularization"]):
             model.add(layers.LSTM(int(self.config["LSTM_depth"]),
-                                  kernel_regularizer=regularizers.l2(int(self.config["regularization_weight"]))))
+                                  kernel_regularizer=regularizers.l2(float(self.config["regularization_weight"]))))
         else:
             model.add(layers.LSTM(int(self.config["LSTM_depth"])))
         model.add(layers.Dense(int(self.config["denselayer_size"])))
