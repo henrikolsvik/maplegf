@@ -1,6 +1,7 @@
 # MLPNN CONFIG
 n=5
 normalize=True
+normalize_by=term
 # Algorithm Specific Parameters
 max_iter=100000
 hidden_layer_sizes=1000

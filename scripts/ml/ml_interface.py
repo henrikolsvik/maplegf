@@ -164,8 +164,13 @@ class Mlinterface:
         bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
 
         if bool(self.config["normalize"]):
-            samples[0] = Normalizer().fit_transform(samples[0])
-
+            if self.config["normalize_by"] == "term":
+                samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose()
+            if self.config["normalize_by"] == "sample":
+                samples[0] = Normalizer().fit_transform(samples[0])
+            if self.config["normalize_by"] == "sample_then_term":
+                samples[0] = Normalizer().fit_transform(samples[0])
+                samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose()
 
         for i in range(0, len(samples[1])):
             bound_samples_and_targets.append([samples[1][i], samples[0][i], target[i]])
