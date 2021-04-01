@@ -1,6 +1,7 @@
 #SVM CONFIG SIMPLE
 n=5
 normalize=True
+normalize_by=term
 # Algorithm Specific Parameters
 C=0.1
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.

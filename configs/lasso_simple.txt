@@ -1,6 +1,7 @@
 # LASSO CONFIG SIMPLE
 n=5
 normalize=True
+normalize_by=term
 # Algorithm Specific Parameters
 positive=True
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
