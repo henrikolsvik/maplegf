@@ -1,5 +1,7 @@
 #LSTM CONFIG SIMPLE
 n=5
+normalize=True
+# Algorithm Specific Parameters
 embedding=32
 LSTM_depth=32
 denselayer_size=10

@@ -4,6 +4,7 @@ import numpy as np
 import datetime
 import os.path
 from sklearn.feature_selection import SelectKBest, SelectPercentile
+from sklearn.preprocessing import Normalizer
 
 
 class Mlinterface:
@@ -160,8 +161,12 @@ class Mlinterface:
         return score, predictions
 
     def n_split_shuffle(self, samples, target, n):
-        bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], \
-                                                                                                     [], [], []
+        bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
+
+        if bool(self.config["normalize"]):
+            samples[0] = Normalizer().fit_transform(samples[0])
+
+
         for i in range(0, len(samples[1])):
             bound_samples_and_targets.append([samples[1][i], samples[0][i], target[i]])
 
