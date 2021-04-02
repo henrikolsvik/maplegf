@@ -1,7 +1,7 @@
 #LSTM CONFIG SIMPLE
 n=5
 normalize=True
-normalize_by=term
+normalize_by=sample_then_term
 # Algorithm Specific Parameters
 embedding=32
 LSTM_depth=32
