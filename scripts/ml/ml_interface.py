@@ -46,14 +46,16 @@ class Mlinterface:
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()
-        self.timekeeping["Total_time:"] = (self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
+        self.timekeeping["Total_time:"] = (
+                    self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
         self.write_txt_results(output_filename, target, score)
         self.write_csv_results(input_samples, input_samples_parameter, target, score)
 
     def write_csv_results(self, input_samples, input_samples_parameter, target, score):
         print(type(self))
         if not os.path.isfile("results/combined_results.csv"):
-            open("results/combined_results.csv", "a").write("Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Parameters;Samples_name;Preprocessing_config\n")
+            open("results/combined_results.csv", "a").write(
+                "Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Parameters;Samples_name;Preprocessing_config\n")
         open("results/combined_results.csv", "a").write(
             type(self).__name__ + ";" +
             str(self.timekeeping["Total_time:"]) + ";" +
@@ -160,17 +162,25 @@ class Mlinterface:
 
         return score, predictions
 
+    def lstm_upscale_normalization(self, samples):
+        return [[x * int(self.config["lstm_normalization_multiplier"]) for x in y] for y in samples[0]]
+
     def n_split_shuffle(self, samples, target, n):
         bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
 
-        if bool(self.config["normalize"]):
-            if self.config["normalize_by"] == "term":
-                samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
-            if self.config["normalize_by"] == "sample":
-                samples[0] = Normalizer().fit_transform(samples[0]).tolist()
-            if self.config["normalize_by"] == "sample_then_term":
-                samples[0] = Normalizer().fit_transform(samples[0]).tolist()
-                samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
+        if self.config["normalize_by"] == "term":
+            samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
+            if self.__class__.__name__ == "LSTM":
+                samples[0] = self.lstm_upscale_normalization(samples)
+        if self.config["normalize_by"] == "sample":
+            samples[0] = Normalizer().fit_transform(samples[0]).tolist()
+            if self.__class__.__name__ == "LSTM":
+                samples[0] = self.lstm_upscale_normalization(samples)
+        if self.config["normalize_by"] == "sample_then_term":
+            samples[0] = Normalizer().fit_transform(samples[0]).tolist()
+            samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
+            if self.__class__.__name__ == "LSTM":
+                samples[0] = self.lstm_upscale_normalization(samples)
 
         for i in range(0, len(samples[1])):
             bound_samples_and_targets.append([samples[1][i], samples[0][i], target[i]])

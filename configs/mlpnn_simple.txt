@@ -1,6 +1,6 @@
 # MLPNN CONFIG
+# Normalization types: sample, term, sample_then_term. Any other value disables normalization
 n=5
-normalize=True
 normalize_by=sample
 # Algorithm Specific Parameters
 max_iter=100000
