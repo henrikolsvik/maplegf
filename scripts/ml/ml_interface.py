@@ -169,7 +169,7 @@ class Mlinterface:
             if self.config["normalize_by"] == "sample":
                 samples[0] = Normalizer().fit_transform(samples[0]).tolist()
             if self.config["normalize_by"] == "sample_then_term":
-                samples[0] = Normalizer().fit_transform(samples[0])
+                samples[0] = Normalizer().fit_transform(samples[0]).tolist()
                 samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
 
         for i in range(0, len(samples[1])):
