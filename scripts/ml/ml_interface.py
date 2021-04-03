@@ -133,9 +133,9 @@ class Mlinterface:
             samples = input_samples
 
         if self.config["ufs_type"] == "percent":
-            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples, target)
+            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
         elif self.config["ufs_type"] == "count":
-            filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target)
+            filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
 
         if self.config["ufs_stage"] == "pre":
             names = []
