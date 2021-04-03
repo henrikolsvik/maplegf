@@ -21,11 +21,6 @@ class LSTM(Mlinterface):
         for i in range(0, len(read_samples_with_names[0])):
             bound_samples_and_targets.append([read_samples_with_names[1][i], read_samples_with_names[0][i], target[i]])
 
-        max_value = 0
-        for item in bound_samples_and_targets:
-            if max(item[1]) > max_value:
-                max_value = int(max(item[1]))+1
-
         if self.config["ufs_stage"] == "pre":
             samples_with_names = self.do_usf(read_samples_with_names, target)
         else:
@@ -34,10 +29,16 @@ class LSTM(Mlinterface):
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
 
+        max_value = 0
+        for set in train_sample:
+            for item in set:
+                if max(item) > max_value:
+                    max_value = int(max(item))+1
+
         score = []
 
         model = Sequential()
-        model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
+        model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), )))#, input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
         if self.config["l2_regularization"].lower() == "true":
             model.add(layers.LSTM(int(self.config["LSTM_depth"]),
                                   kernel_regularizer=regularizers.l2(float(self.config["regularization_weight"]))))

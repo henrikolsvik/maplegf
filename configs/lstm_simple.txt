@@ -2,7 +2,7 @@
 n=5
 # Normalization types: sample, term, sample_then_term. Any other value disables normalization
 normalize_by=sample
-lstm_normalization_multiplier=10000
+lstm_normalization_multiplier=1
 # Algorithm Specific Parameters
 embedding=32
 LSTM_depth=32

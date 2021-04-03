@@ -128,7 +128,7 @@ class Mlinterface:
             samples = []
             for i in range(0, len(input_samples[0])):
                 samples.append(input_samples[0][i])
-                target[i] = int(target[i])
+                target[i] = target[i]
         else:
             samples = input_samples
 
