@@ -1,5 +1,8 @@
-# MLPNN CONFIG SIMPLE
+# MLPNN CONFIG
+# Normalization types: sample, term, sample_then_term. Any other value disables normalization
 n=5
+normalize_by=sample_then_term
+# Algorithm Specific Parameters
 max_iter=100000
 hidden_layer_sizes=1000
 alpha=0.0001

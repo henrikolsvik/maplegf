@@ -1,9 +1,12 @@
 #XGBOOST CONFIG SIMPLE
 n=5
-max_depth=16
+# Normalization types: sample, term, sample_then_term. Any other value disables normalization
+normalize_by=sample
+# Algorithm Specific Parameters
+max_depth=32
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
 ufs_type=count
 ufs_number=1
 #ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
-ufs_stage=pre
+ufs_stage=none
 # DEFAULT: https://xgboost.readthedocs.io/en/latest/parameter.html

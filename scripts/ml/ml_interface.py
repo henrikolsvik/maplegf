@@ -4,6 +4,7 @@ import numpy as np
 import datetime
 import os.path
 from sklearn.feature_selection import SelectKBest, SelectPercentile
+from sklearn.preprocessing import Normalizer
 
 
 class Mlinterface:
@@ -45,7 +46,8 @@ class Mlinterface:
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()
-        self.timekeeping["Total_time:"] = (self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
+        self.timekeeping["Total_time:"] = (
+                    self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
         self.write_txt_results(output_filename, target, score)
         self.write_csv_results(input_samples, input_samples_parameter, target, score)
 
@@ -126,14 +128,14 @@ class Mlinterface:
             samples = []
             for i in range(0, len(input_samples[0])):
                 samples.append(input_samples[0][i])
-                target[i] = int(target[i])
+                target[i] = target[i]
         else:
             samples = input_samples
 
         if self.config["ufs_type"] == "percent":
-            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples, target)
+            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
         elif self.config["ufs_type"] == "count":
-            filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target)
+            filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
 
         if self.config["ufs_stage"] == "pre":
             names = []
@@ -160,9 +162,26 @@ class Mlinterface:
 
         return score, predictions
 
+    def lstm_upscale_normalization(self, samples):
+        return [[x * int(self.config["lstm_normalization_multiplier"]) for x in y] for y in samples[0]]
+
     def n_split_shuffle(self, samples, target, n):
-        bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], \
-                                                                                                     [], [], []
+        bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
+
+        if self.config["normalize_by"] == "term":
+            samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
+            if self.__class__.__name__ == "LSTM":
+                samples[0] = self.lstm_upscale_normalization(samples)
+        if self.config["normalize_by"] == "sample":
+            samples[0] = Normalizer().fit_transform(samples[0]).tolist()
+            if self.__class__.__name__ == "LSTM":
+                samples[0] = self.lstm_upscale_normalization(samples)
+        if self.config["normalize_by"] == "sample_then_term":
+            samples[0] = Normalizer().fit_transform(samples[0]).tolist()
+            samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
+            if self.__class__.__name__ == "LSTM":
+                samples[0] = self.lstm_upscale_normalization(samples)
+
         for i in range(0, len(samples[1])):
             bound_samples_and_targets.append([samples[1][i], samples[0][i], target[i]])
 
@@ -174,11 +193,11 @@ class Mlinterface:
 
             for item in items[0]:
                 train_add_sample.append(bound_samples_and_targets[item][1])
-                train_add_target.append(int(bound_samples_and_targets[item][2]))
+                train_add_target.append(bound_samples_and_targets[item][2])
             for item in items[1]:
                 test_add_name.append(bound_samples_and_targets[item][0])
                 test_add_sample.append(bound_samples_and_targets[item][1])
-                test_add_target.append(int(bound_samples_and_targets[item][2]))
+                test_add_target.append(bound_samples_and_targets[item][2])
 
             if self.config["ufs_stage"] == "kfold":
                 train = self.do_usf(train_add_sample, train_add_target)
