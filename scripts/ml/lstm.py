@@ -33,16 +33,18 @@ class LSTM(Mlinterface):
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
 
-        score = []
-
-        model = Sequential()
-        model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
-        model.add(layers.LSTM(int(self.config["LSTM_depth"])))
-        model.add(layers.Dense(int(self.config["denselayer_size"])))
-        model.summary()
-        model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
-
         for i in range(0, len(train_sample)):
+
+            score = []
+
+            model = Sequential()
+            model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
+            model.add(layers.LSTM(int(self.config["LSTM_depth"])))
+            model.add(layers.Dense(int(self.config["denselayer_size"])))
+            model.summary()
+            model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+
+        #for i in range(0, len(train_sample)):
             keras.backend.clear_session()
 
             iter_train_sample = train_sample[i]
@@ -50,7 +52,7 @@ class LSTM(Mlinterface):
             iter_test_sample = test_sample[i]
             iter_test_target = [int(k) for k in test_target[i]]
 
-            model.fit(iter_train_sample, iter_train_target, batch_size=32, epochs=20)
+            model.fit(iter_train_sample, iter_train_target, batch_size=64, epochs=20)
             score.append(model.evaluate(iter_test_sample, iter_test_target, verbose=2)[1])
 
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)

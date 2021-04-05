@@ -52,15 +52,16 @@ class Mlinterface:
     def write_csv_results(self, input_samples, input_samples_parameter, target, score):
         print(type(self))
         if not os.path.isfile("results/combined_results.csv"):
-            open("results/combined_results.csv", "a").write("Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Parameters;Samples_name;Preprocessing_config\n")
+            open("results/combined_results.csv", "a").write("Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Scores;Parameters;Samples_name;Preprocessing_config\n")
         open("results/combined_results.csv", "a").write(
             type(self).__name__ + ";" +
             str(self.timekeeping["Total_time:"]) + ";" +
-            str(np.array(score).sum() / len(score)) + ";" +
-            str(np.array(score).std()) + ";" +
+            str("{0:.3f}".format(np.array(score).sum() / len(score))) + ";" +
+            str("{0:.3f}".format(np.array(score).std())) + ";" +
             str(self.get_baseline_accuracy(target)) + ";" +
             str(self.timekeeping["Start_time:"]) + ";" +
             str(self.timekeeping["End_time:"]) + ";" +
+            str(score) + ";" +
             str(self.config) + ";" +
             str(input_samples) + ";" +
             str([str(x).replace("\n", "") for x in (open(input_samples_parameter, "r").readlines())]) + "\n")

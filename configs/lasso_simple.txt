@@ -1,6 +1,7 @@
 # LASSO CONFIG SIMPLE
 n=5
 positive=True
+tol=0.1
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
 ufs_type=count
 ufs_number=1
