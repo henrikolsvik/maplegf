@@ -50,7 +50,6 @@ class LSTM(Mlinterface):
             model.summary()
             model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
 
-        #for i in range(0, len(train_sample)):
             keras.backend.clear_session()
 
             iter_train_sample = train_sample[i]
@@ -58,7 +57,7 @@ class LSTM(Mlinterface):
             iter_test_sample = test_sample[i]
             iter_test_target = [int(k) for k in test_target[i]]
 
-            model.fit(iter_train_sample, iter_train_target, batch_size=64, epochs=20)
+            model.fit(iter_train_sample, iter_train_target, batch_size=int(self.config["batch_size"]), epochs=int(self.config["epochs"]))
             score.append(model.evaluate(iter_test_sample, iter_test_target, verbose=2)[1])
 
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
