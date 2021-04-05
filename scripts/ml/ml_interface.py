@@ -165,9 +165,7 @@ class Mlinterface:
     def lstm_upscale_normalization(self, samples):
         return [[x * int(self.config["lstm_normalization_multiplier"]) for x in y] for y in samples[0]]
 
-    def n_split_shuffle(self, samples, target, n):
-        bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
-
+    def normalize_dataset(self, samples):
         if self.config["normalize_by"] == "term":
             samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
             if self.__class__.__name__ == "LSTM":
@@ -181,6 +179,10 @@ class Mlinterface:
             samples[0] = (Normalizer().fit_transform(np.array(samples[0]).transpose())).transpose().tolist()
             if self.__class__.__name__ == "LSTM":
                 samples[0] = self.lstm_upscale_normalization(samples)
+        return samples
+
+    def n_split_shuffle(self, samples, target, n):
+        bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
 
         for i in range(0, len(samples[1])):
             bound_samples_and_targets.append([samples[1][i], samples[0][i], target[i]])

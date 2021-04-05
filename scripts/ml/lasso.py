@@ -10,8 +10,8 @@ class Lasso(Mlinterface):
                                  output_filename, config_file):
         read_samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         self.read_config(config_file)
-
         target = self.targets_to_int(target)
+        read_samples_with_names = self.normalize_dataset(samples=read_samples_with_names)
 
         if self.config["ufs_stage"] == "pre":
             samples_with_names = self.do_usf(read_samples_with_names, target)
