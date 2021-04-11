@@ -18,16 +18,11 @@ class LSTM(Mlinterface):
 
         bound_samples_and_targets = []
 
-        for i in range(0, len(read_samples_with_names[0])):
-            bound_samples_and_targets.append([read_samples_with_names[1][i], read_samples_with_names[0][i], target[i]])
-
-        if self.config["ufs_stage"] == "pre":
-            samples_with_names = self.do_usf(read_samples_with_names, target)
-        else:
-            samples_with_names = read_samples_with_names
+        #for i in range(0, len(read_samples_with_names[0])):
+        #    bound_samples_and_targets.append([read_samples_with_names[1][i], read_samples_with_names[0][i], target[i]])
 
         train_sample, train_target, test_sample, test_target, test_name = \
-            self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
+            self.n_split_shuffle(read_samples_with_names, target, int(self.config["n"]))
 
         max_value = 0
         for set in train_sample:

@@ -125,9 +125,10 @@ class Mlinterface:
 
     def do_usf(self, input_samples, target):
         if self.config["ufs_stage"] == "pre":
-            samples = []
+            samples, names = [], []
             for i in range(0, len(input_samples[0])):
                 samples.append(input_samples[0][i])
+                names.append(input_samples[1][i])
                 target[i] = target[i]
         else:
             samples = input_samples
@@ -137,12 +138,7 @@ class Mlinterface:
         elif self.config["ufs_type"] == "count":
             filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
 
-        if self.config["ufs_stage"] == "pre":
-            names = []
-            for i in range(0, len(input_samples[0])):
-                names.append(input_samples[1][i])
-            return [filtered_terms, names]
-        return filtered_terms
+        return [filtered_terms, names]
 
     def make_predictions(self, clf, train_sample, train_target, test_sample, test_target, test_name):
         predictions, score = [], []
@@ -183,6 +179,11 @@ class Mlinterface:
 
     def n_split_shuffle(self, samples, target, n):
         bound_samples_and_targets, train_sample, test_sample, test_target, train_target, test_name = [], [], [], [], [], []
+
+        samples = self.normalize_dataset(samples)
+
+        if self.config["ufs_stage"] == "pre":
+            samples = self.do_usf(samples, target)
 
         for i in range(0, len(samples[1])):
             bound_samples_and_targets.append([samples[1][i], samples[0][i], target[i]])

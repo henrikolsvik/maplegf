@@ -7,8 +7,8 @@ max_iter=100000
 hidden_layer_sizes=1000
 alpha=0.0001
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
-ufs_type=count
-ufs_number=1
+ufs_type=percent
+ufs_number=100
 #ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
 ufs_stage=pre
 # DEFAULT: sklearn.neural_network.MLPClassifier(hidden_layer_sizes=100, activation='relu', *, solver='adam',
