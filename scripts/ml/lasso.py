@@ -10,16 +10,10 @@ class Lasso(Mlinterface):
                                  output_filename, config_file):
         read_samples_with_names, target = self.load_files(input_samples_file, input_target_file)
         self.read_config(config_file)
+
         target = self.targets_to_int(target)
-        read_samples_with_names = self.normalize_dataset(samples=read_samples_with_names)
-
-        if self.config["ufs_stage"] == "pre":
-            samples_with_names = self.do_usf(read_samples_with_names, target)
-        else:
-            samples_with_names = read_samples_with_names
-
         train_sample, train_target, test_sample, test_target, test_name = \
-            self.n_split_shuffle(samples_with_names, target, int(self.config["n"]))
+            self.n_split_shuffle(read_samples_with_names, target, int(self.config["n"]))
 
         if self.config["positive"].lower() == "true":
             clf = linear_model.Lasso(positive=True, tol=float(self.config["tol"]))
@@ -29,10 +23,7 @@ class Lasso(Mlinterface):
 
         auc_scores = []
         for i in range(0, len(predictions)):
-            try:
-                auc_scores.append(sklearn.metrics.auc(predictions[i][2], predictions[i][1]))
-            except:
-                auc_scores.append(0)
+            auc_scores.append(sklearn.metrics.auc(predictions[i][2], predictions[i][1]))
 
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, auc_scores, target)
 

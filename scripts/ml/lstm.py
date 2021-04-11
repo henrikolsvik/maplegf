@@ -16,11 +16,6 @@ class LSTM(Mlinterface):
         target = self.targets_to_int(target)
         self.read_config(config_file)
 
-        bound_samples_and_targets = []
-
-        #for i in range(0, len(read_samples_with_names[0])):
-        #    bound_samples_and_targets.append([read_samples_with_names[1][i], read_samples_with_names[0][i], target[i]])
-
         train_sample, train_target, test_sample, test_target, test_name = \
             self.n_split_shuffle(read_samples_with_names, target, int(self.config["n"]))
 
