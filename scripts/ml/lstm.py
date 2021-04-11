@@ -35,9 +35,9 @@ class LSTM(Mlinterface):
                 if max(item) > max_value:
                     max_value = int(max(item))+1
 
-        for i in range(0, len(train_sample)):
+        score = []
 
-            score = []
+        for i in range(0, len(train_sample)):
 
             model = Sequential()
             model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), )))#, input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
