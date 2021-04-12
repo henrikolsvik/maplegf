@@ -2,19 +2,19 @@
 n=5
 # Normalization types: sample, term, sample_then_term. Any other value disables normalization
 normalize_by=sample
-lstm_normalization_multiplier=1
+lstm_normalization_multiplier=1000
 # Algorithm Specific Parameters
 embedding=32
 LSTM_depth=32
-denselayer_size=10
-epochs=10
+denselayer_size=1000
+epochs=20
 batch_size=32
 # Regularization
 l2_regularization=false
 regularization_weight=0.0001
 # Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
-ufs_type=count
-ufs_number=1
+ufs_type=percent
+ufs_number=100
 # ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
 ufs_stage=none
 # Default tf.keras.layers.LSTM(

@@ -5,8 +5,8 @@ normalize_by=sample
 # Algorithm Specific Parameters
 C=0.1
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
-ufs_type=count
-ufs_number=1
+ufs_type=percent
+ufs_number=100
 #ufs_stage specifices when the ufs should take place. For the entire dataset prior to execution: "pre". For each training set during cross validation: "kfold". "none" for disabling UFS.
 ufs_stage=none
 # Default:
