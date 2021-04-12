@@ -24,6 +24,7 @@ class LSTM(Mlinterface):
             for item in set:
                 if max(item) > max_value:
                     max_value = int(max(item))+1
+        max_value = max_value + int(self.config["lstm_normalization_multiplier"])
 
         score = []
 
@@ -31,11 +32,7 @@ class LSTM(Mlinterface):
 
             model = Sequential()
             model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), )))#, input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
-            if self.config["l2_regularization"].lower() == "true":
-                model.add(layers.LSTM(int(self.config["LSTM_depth"]),
-                                      kernel_regularizer=regularizers.l2(float(self.config["regularization_weight"]))))
-            else:
-                model.add(layers.LSTM(int(self.config["LSTM_depth"])))
+            model.add(layers.LSTM(int(self.config["LSTM_depth"])))
             model.add(layers.Dense(int(self.config["denselayer_size"])))
             model.summary()
             model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
