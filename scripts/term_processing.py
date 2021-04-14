@@ -2,6 +2,7 @@ import sys
 import os
 import datetime
 import numpy as np
+from term_processing_utils import find_sequences_matching_metadata_and_write_matching_metadata
 
 
 def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
@@ -12,8 +13,12 @@ def run_preprocessing(sequence_dir, metadata_filepath, sample_output_filename,
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
 
+    sequences = [[x, ""] for x in os.listdir(sequence_dir)]
+
     term_count_by_sample, coverage_statistics = [], []
-    sequence_file_list = get_sequence_file_list(sequence_dir, metadata, metadata_out_filename)
+    sequence_file_list = find_sequences_matching_metadata_and_write_matching_metadata(sequences, metadata, metadata_out_filename)
+
+    sequence_file_list = [x[0] for x in sequence_file_list]
 
     process_values["Number of samples available: "] = str(len(os.listdir(sequence_dir)))
     process_values["Number of samples included: "] = str(len(sequence_file_list))

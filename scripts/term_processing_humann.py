@@ -3,6 +3,8 @@ import os
 import datetime
 import numpy as np
 
+from term_processing_utils import find_sequences_matching_metadata_and_write_matching_metadata
+
 
 def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filename,
                       coverage_key_stats_filename, term_count_unprocessed_filename, term_count_processed_filename,
@@ -12,7 +14,7 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
 
     metadata = read_metadata_file(metadata_filepath)
     config = read_config(config_file)
-    term_count_by_sample, coverage_statistics, sequences = [], [], []
+    term_count_by_sample, coverage_statistics, samples = [], [], []
 
     sequence_data = read_file(sequence_filename, config)
 
@@ -23,15 +25,7 @@ def run_preprocessing(sequence_filename, metadata_filepath, sample_output_filena
     process_values["Number of samples available: "] = num_of_sequences
     process_values["Number of metadata items: "] = str(len(metadata))
 
-    metadata_out = open(metadata_out_filename, "a+")
-    for metadata_item in metadata:
-        for sequence in sequence_data:
-            if metadata_item[0] in sequence[0] and sequence[0] not in [x[0] for x in sequences]:
-                metadata_out.write(str(metadata_item[0]) + "," + str(metadata_item[1]) + "\n")
-                sequences.append(sequence)
-
-    metadata_out.close()
-    samples = []
+    sequences = find_sequences_matching_metadata_and_write_matching_metadata(sequence_data, metadata, metadata_out_filename)
 
     for sequence in sequences:
         samples.append(sequence[0])
@@ -156,16 +150,6 @@ def read_metadata_file(metadata_filepath):
         data.append(line.split(","))
     file.close()
     return data
-
-
-def read_files_matching_metadata(filepath, metadata_sequences):
-    data = []
-    for sequence in metadata_sequences:
-        for filename in os.listdir(filepath):
-            if sequence[0] in filename:
-                data.append(read_file(filepath + "/" + filename))
-    return data
-
 
 def limit_occurrence_n_in_m_share(term_count_by_sample_input, threshold_abundance, threshold_share):
     term_count_by_sample = term_count_by_sample_input
