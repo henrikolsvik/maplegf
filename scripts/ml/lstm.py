@@ -32,15 +32,15 @@ class LSTM(Mlinterface):
 
             model = Sequential()
             if self.config["embedding_enabled"].lower() == "true":
-                iter_train_sample = train_sample[i]
-                iter_test_sample = test_sample[i]
+                iter_train_sample = [train_sample[i]]
+                iter_test_sample = [test_sample[i]]
                 iter_train_target = [int(k) for k in train_target[i]]
 
-                model.add(layers.Embedding(max_value, int(self.config["embedding_level"]), input_shape=(len(train_sample[0][0]),)))
+                model.add(layers.Embedding(max_value, int(self.config["embedding_level"]), input_shape=(1,)))
                 for q in range(0, int(self.config["num_layers"])):
                     model.add(layers.LSTM(int(self.config["LSTM_depth"]), return_sequences=True))
-                    #model.add(Dropout(float(self.config["dropout"])))
-                #model.add(layers.LSTM(int(self.config["LSTM_depth"])))
+                    model.add(Dropout(float(self.config["dropout"])))
+                model.add(layers.LSTM(int(self.config["LSTM_depth"])))
                 model.add(layers.Dense(int(self.config["denselayer_size"])))
             else:
                 iter_train_sample = [train_sample[i]]
