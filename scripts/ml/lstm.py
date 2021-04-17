@@ -32,8 +32,8 @@ class LSTM(Mlinterface):
 
             model = Sequential()
             if self.config["embedding_enabled"].lower() == "true":
-                iter_train_sample = [train_sample[i]]
-                iter_test_sample = [test_sample[i]]
+                iter_train_sample = train_sample[i]
+                iter_test_sample = test_sample[i]
                 iter_train_target = [int(k) for k in train_target[i]]
 
                 model.add(layers.Embedding(max_value, int(self.config["embedding_level"]), input_shape=(1,)))

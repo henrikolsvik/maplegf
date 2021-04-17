@@ -6,7 +6,7 @@ lstm_normalization_multiplier=1
 # Algorithm Specific Parameters
 # If you specify embedding_enabled=true, then you will add an embedding layer to the start of the LSTM.
 # Normalization works poorly with embedding.
-embedding_enabled=true
+embedding_enabled=false
 embedding_level=32
 LSTM_depth=512
 num_layers=2
