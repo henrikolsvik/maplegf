@@ -28,13 +28,13 @@ class LSTM(Mlinterface):
             iter_train_target = [int(k) for k in train_target[i]]
 
             model = Sequential()
-            for q in range(1, int(self.config["num_layers"])):
-                model.add(layers.LSTM(int(self.config["LSTM_depth"]), return_sequences=True))
-                model.add(Dropout(0.2))
-            model.add(layers.LSTM(int(self.config["LSTM_depth"])))
-            model.add(layers.Dense(int(self.config["denselayer_size"]), activation='softmax'))
-
-            model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
+            for q in range(0, int(self.config["num_layers"])):
+                model.add(layers.LSTM(int(self.config["LSTM_depth"]), return_sequences=True, input_shape=(1, len(iter_train_sample[0][0]))))
+                model.add(Dropout(float(self.config["dropout"])))
+            #model.add(layers.LSTM(int(self.config["LSTM_depth"])))
+            model.add(layers.Dense(int(self.config["denselayer_size"])))
+            model.summary()
+            model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
             model.fit(iter_train_sample, iter_train_target, batch_size=int(self.config["batch_size"]),
                       epochs=int(self.config["epochs"]))
 

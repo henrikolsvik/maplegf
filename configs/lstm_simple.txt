@@ -5,9 +5,10 @@ normalize_by=sample
 lstm_normalization_multiplier=1
 # Algorithm Specific Parameters
 embedding=32
-LSTM_depth=32
+LSTM_depth=512
 num_layers=2
-denselayer_size=2
+denselayer_size=1
+dropout=0.1
 epochs=20
 batch_size=32
 # Regularization
