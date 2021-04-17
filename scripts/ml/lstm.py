@@ -2,6 +2,7 @@ import sys
 
 from tensorflow import keras
 from tensorflow.keras import layers
+from tensorflow.python.keras.layers import Dropout
 from tensorflow.python.keras.models import Sequential
 import numpy as np
 from tensorflow.keras import regularizers
@@ -33,22 +34,20 @@ class LSTM(Mlinterface):
             iter_train_sample = [train_sample[i]]
             iter_train_sample = np.array(iter_train_sample)
             iter_train_sample = iter_train_sample.reshape(len(iter_train_sample[0]), 1, len(iter_train_sample[0][0])).tolist()
+            #iter_train_sample = np.reshape(iter_train_sample, (iter_train_sample.shape[0], 1, iter_train_sample.shape[1]))
             iter_train_target = [int(k) for k in train_target[i]]
 
             model = Sequential()
             #model.add(layers.Embedding(max_value, int(self.config["embedding"]), input_shape=(len(train_sample[0][0]), )))#, input_shape=(len(train_sample[0][0]), ))) #Max value, 32,
+            for q in range(1, int(self.config["num_layers"])):
+                model.add(layers.LSTM(int(self.config["LSTM_depth"]), return_sequences=True))
+                model.add(Dropout(0.2))
             model.add(layers.LSTM(int(self.config["LSTM_depth"])))
-
-
-            model.add(layers.Dense(2, activation='softmax'))
-
-
+            model.add(layers.Dense(int(self.config["denselayer_size"]), activation='softmax'))
 
             model.compile(optimizer="adam", loss="sparse_categorical_crossentropy", metrics=["accuracy"])
             model.fit(iter_train_sample, iter_train_target, batch_size=int(self.config["batch_size"]),
                       epochs=int(self.config["epochs"]))
-
-            keras.backend.clear_session()
 
             iter_test_sample = [test_sample[i]]
             iter_test_sample = np.array(iter_test_sample)
