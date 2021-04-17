@@ -4,11 +4,16 @@ n=5
 normalize_by=sample
 lstm_normalization_multiplier=1
 # Algorithm Specific Parameters
-embedding=32
+# If you specify embedding_enabled=true, then you will add an embedding layer to the start of the LSTM.
+# Normalization works poorly with embedding.
+embedding_enabled=true
+embedding_level=32
 LSTM_depth=512
 num_layers=2
+# Denselayer. Since we want a binary output it is set to one.
 denselayer_size=1
 dropout=0.1
+# Training settings.
 epochs=20
 batch_size=32
 # Regularization
