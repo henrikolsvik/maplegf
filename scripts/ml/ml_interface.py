@@ -94,6 +94,12 @@ class Mlinterface:
         return Mlinterface.read_sample_file(self, input_samples_file), Mlinterface.read_target_file(self,
                                                                                                     input_target_file)
 
+    def get_feature_names(self, input_samples_file):
+        file = open(input_samples_file, "r")
+        features = file.readline().replace("\n", "").split(",")[1:]
+        file.close()
+        return features
+
     def read_sample_file(self, filename):
         file = open(filename, "r")
         lines = file.readlines()
