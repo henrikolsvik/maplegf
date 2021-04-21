@@ -16,9 +16,9 @@ class Lasso(Mlinterface):
             self.n_split_shuffle(read_samples_with_names, target, int(self.config["n"]))
 
         if self.config["positive"].lower() == "true":
-            clf = linear_model.Lasso(positive=True, tol=0.00001, alpha=0)
+            clf = linear_model.Lasso(positive=True, tol=float(self.config["tol"]), alpha=float(self.config["alpha"]))
         else:
-            clf = linear_model.Lasso(positive=True, tol=0.00001, alpha=0)
+            clf = linear_model.Lasso(tol=float(self.config["tol"]), alpha=float(self.config["alpha"]))
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
         auc_scores = []
