@@ -16,14 +16,15 @@ class Lasso(Mlinterface):
             self.n_split_shuffle(read_samples_with_names, target, int(self.config["n"]))
 
         if self.config["positive"].lower() == "true":
-            clf = linear_model.Lasso(positive=True, tol=float(self.config["tol"]))
+            clf = linear_model.Lasso(positive=True, tol=0.00001, alpha=0)
         else:
-            clf = linear_model.Lasso(positive=False, tol=float(self.config["tol"]))
+            clf = linear_model.Lasso(positive=True, tol=0.00001, alpha=0)
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
         auc_scores = []
         for i in range(0, len(predictions)):
-            auc_scores.append(sklearn.metrics.roc_auc_score(predictions[i][2], predictions[i][1]))
+            auc_scores.append(sklearn.metrics.roc_auc_score(predictions[i][2], predictions[i][1]
+                                                            ))
 
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, auc_scores, target)
 
