@@ -1,6 +1,4 @@
 from sklearn.neural_network import MLPClassifier
-from lime import lime_tabular
-import numpy as np
 import sys
 from ml_interface import Mlinterface
 
@@ -21,24 +19,8 @@ class MLPNN(Mlinterface):
                             alpha=float(self.config["alpha"]))
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
-        explainer = lime_tabular.LimeTabularExplainer(
-            training_data=np.array(train_sample[0]),
-            training_labels=np.array(train_target[0]),
-            feature_names=feature_names,
-            class_names=clf.classes_
-        )
-
-        exp = explainer.explain_instance(
-            data_row=np.array(test_sample[0][0]),
-            predict_fn=clf.predict_proba,
-            num_features=50
-        )
-
-        file = open("results/mlpnn_explain.html", "w")
-        file.write("Trying to explain " + str(test_name[0][0]) + ". Is " + str(test_target[0][0]) + "</br>")
-        file.write("Predicted as " + str(predictions[0][1][0]) + "</br>")
-        file.write(exp.as_html())
-        file.close()
+        exp = self.explain_results(train_sample, train_target, feature_names, clf, test_sample)
+        self.write_explanation(exp, test_name, test_target, predictions)
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
 
 

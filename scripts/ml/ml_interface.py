@@ -3,6 +3,7 @@ import time
 import numpy as np
 import datetime
 import os.path
+from lime import lime_tabular
 from sklearn.feature_selection import SelectKBest, SelectPercentile
 from sklearn.preprocessing import Normalizer
 
@@ -43,6 +44,29 @@ class Mlinterface:
             if line[0] != "#":
                 settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
         self.config = settings
+
+    def explain_results(self, train_sample, train_target, feature_names, clf, test_sample):
+        explainer = lime_tabular.LimeTabularExplainer(
+            training_data=np.array(train_sample[0]),
+            training_labels=np.array(train_target[0]),
+            feature_names=feature_names,
+            class_names=clf.classes_
+        )
+
+        exp = explainer.explain_instance(
+            data_row=np.array(test_sample[0][0]),
+            predict_fn=clf.predict_proba,
+            num_features=50
+        )
+
+        return exp
+
+    def write_explanation(self, exp, test_name, test_target, predictions):
+        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now()) +"_explain.html", "w")
+        file.write("Trying to explain " + str(test_name[0][0]) + ". Is " + str(test_target[0][0]) + "</br>")
+        file.write("Predicted as " + str(predictions[0][1][0]) + "</br>")
+        file.write(exp.as_html())
+        file.close()
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()
