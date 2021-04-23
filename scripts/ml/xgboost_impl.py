@@ -18,7 +18,7 @@ class XGBooster(Mlinterface):
         score, predictions = self.make_predictions(xgb_model, train_sample, train_target, test_sample, test_target,
                                                    test_name)
 
-        exp = self.explain_results(train_sample, train_target, feature_names, clf, test_sample)
+        exp = self.explain_results(train_sample, train_target, feature_names, xgb_model, test_sample)
         self.write_explanation(exp, test_name, test_target, predictions)
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
 

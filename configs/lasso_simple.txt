@@ -4,7 +4,8 @@ n=5
 normalize_by=sample
 # Algorithm Specific Parameters
 positive=true
-tol=0.1
+tol=0.00001
+alpha=0
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
 ufs_type=percent
 ufs_number=100
