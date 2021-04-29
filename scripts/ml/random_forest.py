@@ -17,8 +17,8 @@ class RandomForest(Mlinterface):
         clf = RandomForestClassifier(n_estimators=int(self.config["n_estimators"]))
         score, predictions = self.make_predictions(clf, train_sample, train_target, test_sample, test_target, test_name)
 
-        exp = self.explain_results(train_sample, train_target, feature_names, clf, test_sample)
-        self.write_explanation(exp, test_name, test_target, predictions)
+        exp, combined_results = self.explain_results(train_sample, train_target, feature_names, clf, test_sample)
+        self.write_explanation(exp, combined_results, test_name, test_target, predictions)
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
 
 
