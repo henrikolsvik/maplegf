@@ -50,35 +50,54 @@ class Mlinterface:
             training_data=np.array(train_sample[0]),
             training_labels=np.array(train_target[0]),
             feature_names=feature_names,
-            class_names=clf.classes_
+            class_names=clf.classes_,
+            discretize_continuous=True
         )
 
-        exp = explainer.explain_instance(
-            data_row=np.array(test_sample[0][0]),
-            predict_fn=clf.predict_proba,
-            num_features=50
-        )
+        results = []
 
-        return exp
+        for n in range(0, len(test_sample[0])):
+            exp = explainer.explain_instance(
+                data_row=np.array(test_sample[0][n]),
+                predict_fn=clf.predict_proba,
+                num_features=50
+            )
+            results.append(exp.as_list())
 
-    def write_explanation(self, exp, test_name, test_target, predictions):
-        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now()) +"_explain.html", "w")
+        combined_results = {}
+        for i in range(0, len(results)):
+            for q in range(0, len(results[i])):
+                if not results[i][q][0] in combined_results.items():
+                    combined_results[results[i][q][0]] = results[i][q][1]
+                else:
+                    combined_results[results[i][q][0]] += results[i][q][1]
+
+        for item in combined_results: combined_results[item] = combined_results[item] / len(results)
+        return exp, combined_results
+
+    def write_explanation(self, exp, combined_results, test_name, test_target, predictions):
+        print(combined_results)
+        file = open("" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_explain.html", "w", encoding="utf-8")
         file.write("Trying to explain " + str(test_name[0][0]) + ". Is " + str(test_target[0][0]) + "</br>")
         file.write("Predicted as " + str(predictions[0][1][0]) + "</br>")
         file.write(exp.as_html())
+        file.close()
+        file = open("" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_combined_explain.csv", "w", encoding="utf-8")
+        for item in combined_results: file.write(item + "," + str(combined_results[item]) + "\n")
         file.close()
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()
         self.timekeeping["Total_time:"] = (
-                    self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
+                self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
         self.write_txt_results(output_filename, target, score)
         self.write_csv_results(input_samples, input_samples_parameter, target, score)
 
     def write_csv_results(self, input_samples, input_samples_parameter, target, score):
         print(type(self))
         if not os.path.isfile("results/combined_results.csv"):
-            open("results/combined_results.csv", "a").write("Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Scores;Parameters;Samples_name;Preprocessing_config\n")
+            open("results/combined_results.csv", "a").write(
+                "Algorithm;Runtime in Seconds;Score;Score_STD;Baseline;Start_time;End_time;Scores;Parameters;Samples_name;Preprocessing_config\n")
         open("results/combined_results.csv", "a").write(
             type(self).__name__ + ";" +
             str(self.timekeeping["Total_time:"]) + ";" +
@@ -164,7 +183,8 @@ class Mlinterface:
             samples = input_samples
 
         if self.config["ufs_type"] == "percent":
-            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
+            filtered_terms = SelectPercentile(percentile=int(self.config["ufs_number"])).fit_transform(samples,
+                                                                                                       target).tolist()
         elif self.config["ufs_type"] == "count":
             filtered_terms = SelectKBest(k=int(self.config["ufs_number"])).fit_transform(samples, target).tolist()
 
