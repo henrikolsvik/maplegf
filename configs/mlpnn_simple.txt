@@ -6,6 +6,7 @@ normalize_by=sample
 # Set num_samples_to_explain to 0 to explain all samples.
 explanation=enabled
 num_samples_to_explain=2
+num_features_to_list=100
 # Algorithm Specific Parameters
 max_iter=10000
 hidden_layer_sizes=1000
