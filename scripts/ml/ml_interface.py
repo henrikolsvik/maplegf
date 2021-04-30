@@ -55,14 +55,21 @@ class Mlinterface:
         )
 
         results = []
+        num_s_exp = 0
 
-        for n in range(0, len(test_sample[0])):
+        if int(self.config["num_samples_to_explain"]) == 0:
+            num_s_exp = len(test_sample[0])
+        else:
+            num_s_exp = int(self.config["num_samples_to_explain"])
+
+        for n in range(0, num_s_exp):
             exp = explainer.explain_instance(
                 data_row=np.array(test_sample[0][n]),
                 predict_fn=clf.predict_proba,
                 num_features=50
             )
             results.append(exp.as_list())
+            print("Predicted sample.", n, "/", num_s_exp)
 
         combined_results = {}
         for i in range(0, len(results)):
@@ -71,7 +78,7 @@ class Mlinterface:
                     combined_results[results[i][q][0]] = results[i][q][1]
                 else:
                     combined_results[results[i][q][0]] += results[i][q][1]
-
+        print("Prediction complete.")
         for item in combined_results: combined_results[item] = combined_results[item] / len(results)
         return exp, combined_results
 
@@ -88,8 +95,7 @@ class Mlinterface:
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()
-        self.timekeeping["Total_time:"] = (
-                self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
+        self.timekeeping["Total_time:"] = (self.timekeeping["End_time:"] - self.timekeeping["Start_time:"]).total_seconds()
         self.write_txt_results(output_filename, target, score)
         self.write_csv_results(input_samples, input_samples_parameter, target, score)
 

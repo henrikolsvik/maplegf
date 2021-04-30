@@ -2,6 +2,10 @@
 # Normalization types: sample, term, sample_then_term. Any other value disables normalization
 n=5
 normalize_by=sample
+# Explainer settings. Set Explainer "enabled" to enable explanations.
+# Set num_samples_to_explain to 0 to explain all samples.
+explanation=enabled
+num_samples_to_explain=2
 # Algorithm Specific Parameters
 max_iter=10000
 hidden_layer_sizes=1000
