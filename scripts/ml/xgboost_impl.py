@@ -19,7 +19,7 @@ class XGBooster(Mlinterface):
                                                    test_name)
 
         if self.config["explanation"].lower() == "enabled":
-            exp, combined_results = self.explain_results(train_sample, train_target, feature_names, xgb_model, test_sample)
+            exp, combined_results = self.explain_results(train_sample, train_target, feature_names, xgb_model, test_sample, score.index(max(score)))
             self.write_explanation(exp, combined_results, test_name, test_target, predictions)
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
 

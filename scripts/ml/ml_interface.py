@@ -45,37 +45,34 @@ class Mlinterface:
                 settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
         self.config = settings
 
-    def explain_results(self, train_sample, train_target, feature_names, clf, test_sample):
-        print("Starting explainer")
+    def explain_results(self, train_sample, train_target, feature_names, clf, test_sample, best_index):
+        print("Starting explainer. Predicting for n=",best_index)
         explainer = lime_tabular.LimeTabularExplainer(
-            training_data=np.array(train_sample[0]),
-            training_labels=np.array(train_target[0]),
+            training_data=np.array(train_sample[best_index]),
+            training_labels=np.array(train_target[best_index]),
             feature_names=feature_names,
             class_names=clf.classes_,
             discretize_continuous=True
         )
 
         results = []
-        num_s_exp = 0
 
         if int(self.config["num_samples_to_explain"]) == 0:
-            num_s_exp = len(test_sample[0])
+            num_s_exp = len(test_sample[best_index])
         else:
             num_s_exp = int(self.config["num_samples_to_explain"])
 
         print("Predicted sample.", 0, "/", num_s_exp)
         for n in range(0, num_s_exp):
             exp = explainer.explain_instance(
-                data_row=np.array(test_sample[0][n]),
+                data_row=np.array(test_sample[best_index][n]),
                 predict_fn=clf.predict_proba,
                 num_features=int(self.config["num_features_to_list"])
             )
             results.append(exp.as_list())
             print("Predicted sample.", int(n + 1), "/", num_s_exp)
 
-        combined_results = {}
-        unique_term_range_occurences = {}
-        unique_term_occurences = {}
+        combined_results, unique_term_range_occurences, unique_term_occurences = {}, {}, {}
         for i in range(0, len(results)):
             for q in range(0, len(results[i])):
 
