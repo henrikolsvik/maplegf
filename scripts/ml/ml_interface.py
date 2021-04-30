@@ -112,7 +112,6 @@ class Mlinterface:
         file.close()
 
     def write_explanation(self, exp, combined_results, test_name, test_target, predictions):
-        print(combined_results)
         file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_explain.html", "w", encoding="utf-8")
         file.write("Trying to explain " + str(test_name[0][0]) + ". Is " + str(test_target[0][0]) + "</br>")
         file.write("Predicted as " + str(predictions[0][1][0]) + "</br>")
