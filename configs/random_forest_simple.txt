@@ -4,7 +4,7 @@ n=5
 normalize_by=sample
 # Explainer settings. Set Explainer "enabled" to enable explanations.
 # Set num_samples_to_explain to 0 to explain all samples.
-explanation=enabled
+explanation=disabled
 num_samples_to_explain=2
 num_features_to_list=100
 # Algorithm Specific Parameters
