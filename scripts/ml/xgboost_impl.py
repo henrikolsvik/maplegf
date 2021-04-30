@@ -23,7 +23,6 @@ class XGBooster(Mlinterface):
             self.write_explanation(exp, combined_results, test_name, test_target, predictions)
         self.write_results(output_filename, input_samples_file, input_samples_parameters_file, score, target)
 
-
 if __name__ == '__main__':
     xgbooster = XGBooster()
     xgbooster.machine_learning_service(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])

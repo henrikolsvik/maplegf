@@ -46,6 +46,7 @@ class Mlinterface:
         self.config = settings
 
     def explain_results(self, train_sample, train_target, feature_names, clf, test_sample):
+        print("Starting explainer")
         explainer = lime_tabular.LimeTabularExplainer(
             training_data=np.array(train_sample[0]),
             training_labels=np.array(train_target[0]),
@@ -62,6 +63,7 @@ class Mlinterface:
         else:
             num_s_exp = int(self.config["num_samples_to_explain"])
 
+        print("Predicted sample.", 0, "/", num_s_exp)
         for n in range(0, num_s_exp):
             exp = explainer.explain_instance(
                 data_row=np.array(test_sample[0][n]),
@@ -84,12 +86,12 @@ class Mlinterface:
 
     def write_explanation(self, exp, combined_results, test_name, test_target, predictions):
         print(combined_results)
-        file = open("" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_explain.html", "w", encoding="utf-8")
+        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_explain.html", "w", encoding="utf-8")
         file.write("Trying to explain " + str(test_name[0][0]) + ". Is " + str(test_target[0][0]) + "</br>")
         file.write("Predicted as " + str(predictions[0][1][0]) + "</br>")
         file.write(exp.as_html())
         file.close()
-        file = open("" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_combined_explain.csv", "w", encoding="utf-8")
+        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_combined_explain.csv", "w", encoding="utf-8")
         for item in combined_results: file.write(item + "," + str(combined_results[item]) + "\n")
         file.close()
 
