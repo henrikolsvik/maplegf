@@ -78,21 +78,26 @@ class Mlinterface:
         unique_term_occurences = {}
         for i in range(0, len(results)):
             for q in range(0, len(results[i])):
-                if not results[i][q][0] in combined_results.items():
-                    combined_results[results[i][q][0]] = results[i][q][1]
-                    unique_term_range_occurences[results[i][q][0]] = 1
-                    if not results[i][q][0][results[i][q][0].find(":")-2 : results[i][q][0].find(":")+7] in unique_term_occurences:
-                        unique_term_occurences[results[i][q][0][results[i][q][0].find(":") - 2: results[i][q][0].find(":") + 8]] = 1
-                    else:
-                        unique_term_occurences[results[i][q][0][results[i][q][0].find(":") - 2: results[i][q][0].find(":") + 8]] += 1
-                else:
-                    combined_results[results[i][q][0]] += results[i][q][1]
-                    unique_term_range_occurences[results[i][q][0]] += 1
-                    unique_term_occurences[results[i][q][0][results[i][q][0].find(":") - 2: results[i][q][0].find(":") + 8]] += 1
 
-        print(unique_term_range_occurences)
-        print(unique_term_occurences)
-        print(combined_results)
+                term_feature = results[i][q][0]
+                feature_value = results[i][q][1]
+                if term_feature.find(":") == -1:
+                    term = term_feature[term_feature.find("IPR"):term_feature.find("IPR") + 10]
+                else:
+                    term = term_feature[term_feature.find(":") - 2: term_feature.find(":") + 8]
+
+                if not term_feature in combined_results.keys():
+                    combined_results[term_feature] = feature_value
+                    unique_term_range_occurences[term_feature] = 1
+                    if not term in unique_term_occurences.keys():
+                        unique_term_occurences[term] = 1
+                    else:
+                        unique_term_occurences[term] += 1
+                else:
+                    combined_results[term_feature] += feature_value
+                    unique_term_range_occurences[term_feature] += 1
+                    unique_term_occurences[term] += 1
+
         print("Prediction complete.")
         self.write_extra_explanation_info(unique_term_range_occurences, unique_term_occurences)
         for item in combined_results: combined_results[item] = combined_results[item] / len(results)
@@ -100,12 +105,12 @@ class Mlinterface:
 
     def write_extra_explanation_info(self, unique_term_range_occurences, unique_term_occurences):
         file = open("results/" + type(self).__name__ + "_" + str(
-            datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_combined_explain_term_range_occurences.csv", "w", encoding="utf-8")
+            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain_term_range_occurences.csv", "w", encoding="utf-8")
         for item in unique_term_range_occurences: file.write(item + "," + str(unique_term_range_occurences[item]) + "\n")
         file.close()
 
         file = open("results/" + type(self).__name__ + "_" + str(
-            datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_combined_explain_term_occurences.csv", "w",encoding="utf-8")
+            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain_term_occurences.csv", "w",encoding="utf-8")
         for item in unique_term_occurences: file.write(item + "," + str(unique_term_occurences[item]) + "\n")
         file.close()
 
