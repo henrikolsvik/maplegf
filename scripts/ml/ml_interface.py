@@ -46,12 +46,17 @@ class Mlinterface:
         self.config = settings
 
     def explain_results(self, train_sample, train_target, feature_names, clf, test_sample, best_index):
-        print("Starting explainer. Predicting for n=",best_index)
+        if ("Cancer" in x for x in clf.classes_):
+            classes = ["Control", "Cancer_or_AA"]
+        else:
+            classes = [0, 1]
+
+        print("Starting explainer. Predicting for n=", best_index)
         explainer = lime_tabular.LimeTabularExplainer(
             training_data=np.array(train_sample[best_index]),
             training_labels=np.array(train_target[best_index]),
             feature_names=feature_names,
-            class_names=clf.classes_,
+            class_names=classes,
             discretize_continuous=True
         )
 
@@ -62,7 +67,6 @@ class Mlinterface:
         else:
             num_s_exp = int(self.config["num_samples_to_explain"])
 
-        print("Predicted sample.", 0, "/", num_s_exp)
         for n in range(0, num_s_exp):
             exp = explainer.explain_instance(
                 data_row=np.array(test_sample[best_index][n]),
