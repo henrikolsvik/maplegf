@@ -7,12 +7,13 @@ from lime import lime_tabular
 from sklearn.feature_selection import SelectKBest, SelectPercentile
 from sklearn.preprocessing import Normalizer
 
-
 class Mlinterface:
 
     def __init__(self):
         self.config = None
         self.timekeeping = {"Start_time:": datetime.datetime.now()}
+        self.best_index = 0
+        self.num_to_explain = 0
 
     def count_targets(self, target):
         num_targets = {}
@@ -45,6 +46,34 @@ class Mlinterface:
                 settings[line.split("=")[0]] = line.split("=")[1].replace("\n", "")
         self.config = settings
 
+    def combine_dicts(self, combined_appended):
+        combined_final = {}
+        for cur_dict in combined_appended:
+            for item in cur_dict:
+                if item not in combined_final.keys():
+                    combined_final[item] = cur_dict[item]
+                else:
+                    combined_final[item] += cur_dict[item]
+        for item in combined_final: combined_final[item] = combined_final[item] / len(combined_appended)
+        return combined_final
+
+    def explain_multiple(self, train_sample, train_target, feature_names, clf, test_sample, best_index, n):
+        if n == 1:
+            exp, combined_final, combined_final_terms, combined_final_term_features = self.explain_results(train_sample, train_target, feature_names, clf, test_sample, best_index)
+        else:
+            combined_appended_results, combined_appended_terms, combined_appended_term_features = [], [], []
+            for i in range(0, n):
+                exp, combined_results, terms, term_features = self.explain_results(train_sample, train_target, feature_names, clf, test_sample, i)
+                combined_appended_results.append(combined_results)
+                combined_appended_terms.append(terms)
+                combined_appended_term_features.append(term_features)
+            combined_final = self.combine_dicts(combined_appended_results)
+            combined_final_terms = self.combine_dicts(combined_appended_terms)
+            combined_final_term_features = self.combine_dicts(combined_appended_term_features)
+            self.write_extra_explanation_info(combined_final_term_features, combined_final_terms, combined_results)
+        return exp, combined_final, combined_final_terms, combined_final_term_features
+
+
     def explain_results(self, train_sample, train_target, feature_names, clf, test_sample, best_index):
         if ("Cancer" in x for x in clf.classes_):
             classes = ["Control", "Cancer_or_AA"]
@@ -76,6 +105,9 @@ class Mlinterface:
             results.append(exp.as_list())
             print("Predicted sample.", int(n + 1), "/", num_s_exp)
 
+        self.best_index = best_index
+        self.num_to_explain = num_s_exp - 1
+
         combined_results, unique_term_range_occurences, unique_term_occurences = {}, {}, {}
         for i in range(0, len(results)):
             for q in range(0, len(results[i])):
@@ -100,11 +132,12 @@ class Mlinterface:
                     unique_term_occurences[term] += 1
 
         print("Prediction complete.")
-        self.write_extra_explanation_info(unique_term_range_occurences, unique_term_occurences)
-        for item in combined_results: combined_results[item] = combined_results[item] / len(results)
-        return exp, combined_results
 
-    def write_extra_explanation_info(self, unique_term_range_occurences, unique_term_occurences):
+        for item in combined_results: combined_results[item] = combined_results[item] / len(results)
+        self.write_extra_explanation_info(unique_term_range_occurences, unique_term_occurences, combined_results)
+        return exp, combined_results, unique_term_occurences, unique_term_range_occurences
+
+    def write_extra_explanation_info(self, unique_term_range_occurences, unique_term_occurences, combined_results):
         file = open("results/" + type(self).__name__ + "_" + str(
             datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain_term_range_occurences.csv", "w", encoding="utf-8")
         for item in unique_term_range_occurences: file.write(item + "," + str(unique_term_range_occurences[item]) + "\n")
@@ -115,15 +148,18 @@ class Mlinterface:
         for item in unique_term_occurences: file.write(item + "," + str(unique_term_occurences[item]) + "\n")
         file.close()
 
-    def write_explanation(self, exp, combined_results, test_name, test_target, predictions):
-        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_explain.html", "w", encoding="utf-8")
-        file.write("Trying to explain " + str(test_name[0][0]) + ". Is " + str(test_target[0][0]) + "</br>")
-        file.write("Predicted as " + str(predictions[0][1][0]) + "</br>")
-        file.write(exp.as_html())
-        file.close()
-        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%S")) + "_combined_explain.csv", "w", encoding="utf-8")
+        file = open("results/" + type(self).__name__ + "_" + str(
+            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain.csv", "w", encoding="utf-8")
         for item in combined_results: file.write(item + "," + str(combined_results[item]) + "\n")
         file.close()
+
+    def write_explanation(self, exp, combined_results, test_name, test_target, predictions):
+        file = open("results/" + type(self).__name__ + "_" + str(datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_explain.html", "w", encoding="utf-8")
+        file.write("Trying to explain " + str(test_name[self.best_index][self.num_to_explain]) + ". Is " + str(test_target[self.best_index][self.num_to_explain]) + "</br>")
+        file.write("Predicted as " + str(predictions[self.best_index][1][self.num_to_explain]) + "</br>")
+        file.write(exp.as_html())
+        file.close()
+
 
     def write_results(self, output_filename, input_samples, input_samples_parameter, score, target):
         self.timekeeping["End_time:"] = datetime.datetime.now()

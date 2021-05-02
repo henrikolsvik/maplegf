@@ -7,6 +7,7 @@ normalize_by=sample
 explanation=enabled
 num_samples_to_explain=2
 num_features_to_list=100
+num_k_folds_to_interpret=1
 # Algorithm Specific Parameters
 max_iter=10000
 hidden_layer_sizes=1000

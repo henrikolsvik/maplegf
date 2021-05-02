@@ -7,6 +7,7 @@ normalize_by=sample
 explanation=enabled
 num_samples_to_explain=2
 num_features_to_list=100
+num_k_folds_to_interpret=1
 # Algorithm Specific Parameters
 max_depth=32
 #Univariate Feature Selection filter type. "percent" for top ufs_number% features. "count" for top ufs_number features.
