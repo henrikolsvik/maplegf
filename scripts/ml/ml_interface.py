@@ -70,7 +70,7 @@ class Mlinterface:
             combined_final = self.combine_dicts(combined_appended_results)
             combined_final_terms = self.combine_dicts(combined_appended_terms)
             combined_final_term_features = self.combine_dicts(combined_appended_term_features)
-            self.write_extra_explanation_info(combined_final_term_features, combined_final_terms, combined_results)
+            self.write_extra_explanation_info(combined_final_term_features, combined_final_terms, combined_results, "FINAL")
         return exp, combined_final, combined_final_terms, combined_final_term_features
 
 
@@ -134,22 +134,23 @@ class Mlinterface:
         print("Prediction complete.")
 
         for item in combined_results: combined_results[item] = combined_results[item] / len(results)
-        self.write_extra_explanation_info(unique_term_range_occurences, unique_term_occurences, combined_results)
+        self.write_extra_explanation_info(unique_term_range_occurences, unique_term_occurences, combined_results, best_index)
         return exp, combined_results, unique_term_occurences, unique_term_range_occurences
 
-    def write_extra_explanation_info(self, unique_term_range_occurences, unique_term_occurences, combined_results):
+    def write_extra_explanation_info(self, unique_term_range_occurences, unique_term_occurences, combined_results, i):
+        print("writing explanation")
         file = open("results/" + type(self).__name__ + "_" + str(
-            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain_term_range_occurences.csv", "w", encoding="utf-8")
+            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_")) + str(i) +  "_combined_explain_term_range_occurences.csv", "w", encoding="utf-8")
         for item in unique_term_range_occurences: file.write(item + "," + str(unique_term_range_occurences[item]) + "\n")
         file.close()
 
         file = open("results/" + type(self).__name__ + "_" + str(
-            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain_term_occurences.csv", "w",encoding="utf-8")
+            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_")) + str(i) + "_combined_explain_term_occurences.csv", "w",encoding="utf-8")
         for item in unique_term_occurences: file.write(item + "," + str(unique_term_occurences[item]) + "\n")
         file.close()
 
         file = open("results/" + type(self).__name__ + "_" + str(
-            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")) + "_combined_explain.csv", "w", encoding="utf-8")
+            datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S_")) + str(i) + "_combined_explain.csv", "w", encoding="utf-8")
         for item in combined_results: file.write(item + "," + str(combined_results[item]) + "\n")
         file.close()
 
