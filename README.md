@@ -11,7 +11,7 @@ MAPLEgf currently supports IPR and GO terms from InterProScan and GO terms from 
 
 ### Running the program
 
-Take the results from functional gene annotation from InterProScan and HUMAnN and place them in `samples/simplified/` and `samples/go.tsv` respectively. MAPLEgf expects both to be present. If running only one of the two supported algorithms, please edit the `Snakemake.smk` file by commenting out all rules relating to the one you do not have present. In this file you can also edit the expected input filenames and locations in the preprocessing rules.
+Take the results from functional gene annotation from InterProScan and HUMAnN and place them in `samples/simplified/` and `samples/go.tsv` respectively. MAPLEgf expects both to be present. MAPLEgf also expects a metadata file in the .csv format which can match with the sample name strings. The format expected is no headers, column 1 for sample names, column 2 for labels. One sample per row. If running only one of the two supported algorithms, please edit the `Snakemake.smk` file by commenting out all rules relating to the one you do not have present. In this file you can also edit the expected input filenames and locations in the preprocessing rules. 
 
 Run the program by running `snakemake`.
 If a TSD slurm node you can run `snakemakejob.sh`
@@ -28,7 +28,7 @@ Settings for normalization, univariate feature selection and interpretation are 
 ### Results
 
 The results of the executions are written to files in the results folder and aggregated in the `results/combined_results.csv` file.
-If interpretation is enabled it will yield a series of files for each k-fold that is interpreted. For k >= 2 there will also be generated a combined file for the averaged results of the interpretations.   
+If interpretation is enabled it will yield a series of files for each k-fold that is interpreted. For k >= 2 a combined file with averaged results for the interpretation will also be generated.   
 
 ### Dataflow diagram
 
