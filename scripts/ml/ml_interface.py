@@ -70,7 +70,7 @@ class Mlinterface:
             combined_final = self.combine_dicts(combined_appended_results)
             combined_final_terms = self.combine_dicts(combined_appended_terms)
             combined_final_term_features = self.combine_dicts(combined_appended_term_features)
-            self.write_extra_explanation_info(combined_final_term_features, combined_final_terms, combined_results, "FINAL")
+            self.write_extra_explanation_info(combined_final_term_features, combined_final_terms, combined_final, "FINAL")
         return exp, combined_final, combined_final_terms, combined_final_term_features
 
 
