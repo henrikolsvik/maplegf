@@ -11,7 +11,7 @@ MAPLEgf currently supports IPR and GO terms from InterProScan and GO terms from 
 
 ### Running the program
 
-Take the results from functional gene annotation from InterProScan and HUMAnN and place them in `samples/simplified/` and `samples/go.tsv` respectively. MAPLEgf expects both to be present. If running only one of the two supported algorithms, please edit the `Snakemake.smk` file by commenting out all rules relating to the one you do not have present. In this file you can also edit the expected input filenames and locations in the preprocessing rules.
+Take the results from functional gene annotation from InterProScan and HUMAnN and place them in `samples/simplified/` and `samples/go.tsv` respectively. MAPLEgf expects both to be present. MAPLEgf also expects a metadata file in the .csv format which can match with the sample name strings. The format expected is no headers, column 1 for sample names, column 2 for labels. One sample per row. If running only one of the two supported algorithms, please edit the `Snakemake.smk` file by commenting out all rules relating to the one you do not have present. In this file you can also edit the expected input filenames and locations in the preprocessing rules. 
 
 Run the program by running `snakemake`.
 If a TSD slurm node you can run `snakemakejob.sh`
