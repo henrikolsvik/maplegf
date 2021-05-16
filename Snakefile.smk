@@ -45,7 +45,7 @@ rule preprocess_samples_interproscan:
 rule preprocess_samples_humann:
     input:
         samp="samples/go.tsv",
-        meta="metadata/metadata.csv",
+        meta="metadata/metadata_humann.csv",
         config="configs/preprocessing_humann.txt"
     output:
         samp_out="preprocessing_output/processed_samples_humann.csv",
