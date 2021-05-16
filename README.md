@@ -28,7 +28,7 @@ Settings for normalization, univariate feature selection and interpretation are 
 ### Results
 
 The results of the executions are written to files in the results folder and aggregated in the `results/combined_results.csv` file.
-If interpretation is enabled it will yield a series of files for each k-fold that is interpreted. For k >= 2 there will also be generated a combined file for the averaged results of the interpretations.   
+If interpretation is enabled it will yield a series of files for each k-fold that is interpreted. For k >= 2 a combined file with averaged results for the interpretation will also be generated.   
 
 ### Dataflow diagram
 
