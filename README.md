@@ -1,11 +1,11 @@
 ## MAPLEgf - Multi-Algorithm Pipeline for machine LEarning on Gene Functions
-This is the github repo for MAPLEgf a multi-algorithm pipeline for machine learning on gene functions.  
+This is the GitHub repo for MAPLEgf a multi-algorithm pipeline for machine learning on gene functions.  
 MAPLEgf currently supports IPR and GO terms from InterProScan and GO terms from HUMAnN.
 
 ### Installation Instructions
 
 1. Clone this repo.
-2. Install a supported of Python (3.6 - 3.8, confirmed to work as of 14th of May 2021).
+2. Install a supported version of Python (3.6), confirmed to work as of 14th of May 2021.
 3. Install all dependencies by running `pip install -r requirements.txt`.
 4. (optional) Make directories for samples and metadata `mkdir samples && mkdir metadata`.
 
